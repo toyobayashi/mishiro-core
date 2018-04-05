@@ -1,0 +1,31 @@
+{
+  "name": "cgss",
+  "version": "1.0.0",
+  "description": "CGSS JavaScript library",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "rebuild": "node-gyp rebuild"
+  },
+  "keywords": [
+    "cgss",
+    "deresute"
+  ],
+  "author": "Toyobayashi",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.10.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "mocha": "^5.0.5",
+    "node-gyp": "^3.6.2"
+  },
+  "dependencies": {
+    "bindings": "^1.3.0",
+    "msgpack-lite": "^0.1.26",
+    "rijndael-js": "^1.0.0"
+  }
+}
