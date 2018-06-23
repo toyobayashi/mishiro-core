@@ -1,6 +1,13 @@
 # mishiro-core
 
-## usage
+## Require
+
+* Node.js >= 8.0.0
+* Python 2.7
+* [Windows] Visual Studio 2015/2017 and .NET 4.5.1
+* [MacOS] Xcode Command Line Tools
+
+## Usage
 
 ``` javascript
 const { downloader, Client, audio, util } = require('mishiro-core')
