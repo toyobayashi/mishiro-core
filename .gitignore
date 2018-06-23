@@ -1,4 +1,3 @@
 download/*
 !download/.gitkeep
 node_modules/
-build/

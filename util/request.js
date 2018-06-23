@@ -1,6 +1,6 @@
 const http = require('http')
 const https = require('https')
-const fs = require('fs')
+const fs = require('fs-extra')
 const url = require('url')
 const path = require('path')
 
@@ -27,11 +27,11 @@ function request (options, callback) {
   let fileLength = 0
   let contentLength = -1
   if (p) {
+    fs.mkdirsSync(path.dirname(p))
     if (fs.existsSync(p)) {
       callback(null, null, p)
       return
     }
-
     if (fs.existsSync(p + '.tmp')) {
       const f = fs.readFileSync(p + '.tmp')
       fileLength = f.length
@@ -41,7 +41,7 @@ function request (options, callback) {
       else h = { Range: 'bytes=' + fileLength + '-' }
     }
   }
-  let req = protocol[_protocol].request({
+  let req = protocol[_protocol || 'http'].request({
     method: m,
     host: _host,
     path: _path,

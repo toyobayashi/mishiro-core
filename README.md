@@ -1,10 +1,10 @@
-# cgss.js
+# mishiro-core
 
 ## usage
 
 ``` javascript
-const cgss = require('cgss')
-const Client = cgss.Client
+const { downloader, Client, audio, util } = require('mishiro-core')
+
 const {
   downloadManifest,
   downloadAsset,
@@ -12,14 +12,24 @@ const {
   downloadDatabase,
   downloadSpread,
   downloadIcon
-} = cgss.downloader
+} = downloader
+
 const {
   acb2hca,
+  acb2wav,
+  acb2mp3,
   hca2wav,
-  acb2wav
-} = cgss.audio
+  hca2mp3,
+  wav2mp3
+} = audio
 
-const client = new cgss.Client('123456789:987654321:1a3b5c7d-1234-4bcd-9efa-8e6f4a2b7c5d')
+const {
+  request,
+  download,
+  lz4dec
+} = util
+
+const client = new Client('123456789:987654321:1a3b5c7d-1234-4bcd-9efa-8e6f4a2b7c5d')
 
 client.check().then(resVer => console.log(resVer))
 

@@ -1,1 +1,1 @@
-module.exports = require('./lib/cgss.js')
+module.exports = require('./lib/lib.js')

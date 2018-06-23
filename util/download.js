@@ -12,9 +12,9 @@ function download (u, p, onData) {
         'Accept-Encoding': 'gzip',
         'Connection': 'Keep-Alive'
       }
-    }, (err, res, p) => {
+    }, (err, _res, p) => {
       if (err) {
-        if (err.message === 'abort' || /^[4-9][0-9][0-9]$/.test(err.message)) resolve(false)
+        if (err.message === 'abort' || /^[4-9][0-9][0-9]$/.test(err.message)) resolve('')
         else reject(err)
       } else {
         resolve(p)
