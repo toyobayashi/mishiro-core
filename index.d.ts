@@ -17,18 +17,41 @@ export interface ProgressInfo {
   loading: number
 }
 
+export interface ServerResponse {
+  data_headers: {
+    required_res_ver?: string
+    store_url?: string
+    user_id: number | false
+    viewer_id: number | false
+    APP_VER: string
+    sid: string
+    REQUEST_ID: number
+    servertime: number
+    result_code: number
+    [key: string]: any
+  }
+  data: any[] | {
+    [key: string]: any
+  }
+}
+
 export class Client {
-  constructor (account: string, resVer: string)
+  constructor (account: string, resVer?: string)
+  user: string
+  viewer: string
+  udid: string
+  sid: string
+  resVer: string
   post: (path: string, args: any) => Promise<any>
-  check: () => Promise<number | false>
-  getProfile: (viewer: string | number) => Promise<any>
-  getGachaRate: (gacha: string | number) => Promise<any>
+  check: () => Promise<number>
+  getProfile: (viewer: string | number) => Promise<ServerResponse>
+  getGachaRate: (gacha: string | number) => Promise<ServerResponse>
 }
 
 export namespace util {
   export function download (u: string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
   export function request (options: RequestOption, callback: (err: Error | null, res: string | null | undefined, path: string  | null | undefined) => void): ClientRequest | undefined
-  export function lz4dec(input: string, output?: string): string
+  export function lz4dec (input: string, output?: string): string
 }
 
 export namespace downloader {

@@ -1,4 +1,5 @@
 download/
 node_modules/
 test/
+script/
 .eslintrc.json
