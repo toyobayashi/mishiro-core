@@ -42,7 +42,7 @@ export class Client {
   udid: string
   sid: string
   resVer: string
-  post: (path: string, args: any) => Promise<any>
+  post: (path: string, args: any) => Promise<ServerResponse>
   check: () => Promise<number>
   getProfile: (viewer: string | number) => Promise<ServerResponse>
   getGachaRate: (gacha: string | number) => Promise<ServerResponse>
@@ -70,4 +70,29 @@ export namespace audio {
   export function hca2mp3 (hca: string, mp3?: string): Promise<string>
   export function acb2wav (acb: string, singleComplete?: (current: number, total: number, filename: string) => void): Promise<string[]>
   export function acb2mp3 (acb: string, singleComplete?: (current: number, total: number, filename: string) => void): Promise<string[]>
+}
+
+declare interface Core {
+  Client: typeof Client
+  util: {
+    download (u: string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
+    request (options: RequestOption, callback: (err: Error | null, res: string | null | undefined, path: string  | null | undefined) => void): ClientRequest | undefined
+    lz4dec (input: string, output?: string): string
+  }
+  downloader: {
+    downloadManifest (resVer: number | string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
+    downloadAsset (hash: string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
+    downloadSound (k: string, hash: string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
+    downloadDatabase (hash: string, p: string, suffix: string, onData: (prog: ProgressInfo) => void): Promise<string>
+    downloadSpread (id: string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
+    downloadIcon (id: string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
+  }
+  audio: {
+    acb2hca (acb: string, targetDir?: string): Promise<string[]>
+    hca2wav (hca: string): Promise<string>
+    wav2mp3 (wav: string, mp3?: string): Promise<string>
+    hca2mp3 (hca: string, mp3?: string): Promise<string>
+    acb2wav (acb: string, singleComplete?: (current: number, total: number, filename: string) => void): Promise<string[]>
+    acb2mp3 (acb: string, singleComplete?: (current: number, total: number, filename: string) => void): Promise<string[]>
+  }
 }
