@@ -58,7 +58,7 @@ export namespace downloader {
   export function downloadManifest (resVer: number | string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
   export function downloadAsset (hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
   export function downloadSound (k: string, hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
-  export function downloadDatabase (hash: string, p: string, suffix: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+  export function downloadDatabase (hash: string, p: string, onData?: (prog: ProgressInfo) => void, suffix?: string): Promise<string>
   export function downloadSpread (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
   export function downloadIcon (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
 }
@@ -85,7 +85,7 @@ declare interface Core {
     downloadManifest (resVer: number | string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
     downloadAsset (hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
     downloadSound (k: string, hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
-    downloadDatabase (hash: string, p: string, suffix: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+    downloadDatabase (hash: string, p: string, onData?: (prog: ProgressInfo) => void, suffix?: string): Promise<string>
     downloadSpread (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
     downloadIcon (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
   }
