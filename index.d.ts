@@ -49,18 +49,18 @@ export class Client {
 }
 
 export namespace util {
-  export function download (u: string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
+  export function download (u: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
   export function request (options: RequestOption, callback: (err: Error | null, res: string | null | undefined, path: string  | null | undefined) => void): ClientRequest | undefined
   export function lz4dec (input: string, output?: string): string
 }
 
 export namespace downloader {
-  export function downloadManifest (resVer: number | string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
-  export function downloadAsset (hash: string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
-  export function downloadSound (k: string, hash: string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
-  export function downloadDatabase (hash: string, p: string, suffix: string, onData: (prog: ProgressInfo) => void): Promise<string>
-  export function downloadSpread (id: string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
-  export function downloadIcon (id: string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
+  export function downloadManifest (resVer: number | string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+  export function downloadAsset (hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+  export function downloadSound (k: string, hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+  export function downloadDatabase (hash: string, p: string, suffix: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+  export function downloadSpread (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+  export function downloadIcon (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
 }
 
 export namespace audio {
@@ -75,17 +75,17 @@ export namespace audio {
 declare interface Core {
   Client: typeof Client
   util: {
-    download (u: string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
+    download (u: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
     request (options: RequestOption, callback: (err: Error | null, res: string | null | undefined, path: string  | null | undefined) => void): ClientRequest | undefined
     lz4dec (input: string, output?: string): string
   }
   downloader: {
-    downloadManifest (resVer: number | string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
-    downloadAsset (hash: string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
-    downloadSound (k: string, hash: string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
-    downloadDatabase (hash: string, p: string, suffix: string, onData: (prog: ProgressInfo) => void): Promise<string>
-    downloadSpread (id: string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
-    downloadIcon (id: string, p: string, onData: (prog: ProgressInfo) => void): Promise<string>
+    downloadManifest (resVer: number | string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+    downloadAsset (hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+    downloadSound (k: string, hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+    downloadDatabase (hash: string, p: string, suffix: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+    downloadSpread (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+    downloadIcon (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
   }
   audio: {
     acb2hca (acb: string, targetDir?: string): Promise<string[]>
