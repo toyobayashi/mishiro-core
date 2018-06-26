@@ -73,28 +73,3 @@ export namespace audio {
   export function acb2wav (acb: string, singleComplete?: (current: number, total: number, filename: string) => void): Promise<AcbResult>
   export function acb2mp3 (acb: string, singleComplete?: (current: number, total: number, filename: string) => void): Promise<AcbResult>
 }
-
-declare interface Core {
-  Client: typeof Client
-  util: {
-    download (u: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
-    request (options: RequestOption, callback: (err: Error | null, res: string | null | undefined, path: string  | null | undefined) => void): ClientRequest | undefined
-    lz4dec (input: string, output?: string): string
-  }
-  downloader: {
-    downloadManifest (resVer: number | string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
-    downloadAsset (hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
-    downloadSound (k: string, hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
-    downloadDatabase (hash: string, p: string, onData?: (prog: ProgressInfo) => void, suffix?: string): Promise<string>
-    downloadSpread (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
-    downloadIcon (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
-  }
-  audio: {
-    acb2hca (acb: string, targetDir?: string): Promise<AcbResult>
-    hca2wav (hca: string): Promise<string>
-    wav2mp3 (wav: string, mp3?: string): Promise<string>
-    hca2mp3 (hca: string, mp3?: string): Promise<string>
-    acb2wav (acb: string, singleComplete?: (current: number, total: number, filename: string) => void): Promise<AcbResult>
-    acb2mp3 (acb: string, singleComplete?: (current: number, total: number, filename: string) => void): Promise<AcbResult>
-  }
-}
