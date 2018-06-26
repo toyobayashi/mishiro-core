@@ -63,13 +63,15 @@ export namespace downloader {
   export function downloadIcon (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
 }
 
+declare type AcbResult = string[] & { dirname: string }
+
 export namespace audio {
-  export function acb2hca (acb: string, targetDir?: string): Promise<string[]>
+  export function acb2hca (acb: string, targetDir?: string): Promise<AcbResult>
   export function hca2wav (hca: string): Promise<string>
   export function wav2mp3 (wav: string, mp3?: string): Promise<string>
   export function hca2mp3 (hca: string, mp3?: string): Promise<string>
-  export function acb2wav (acb: string, singleComplete?: (current: number, total: number, filename: string) => void): Promise<string[]>
-  export function acb2mp3 (acb: string, singleComplete?: (current: number, total: number, filename: string) => void): Promise<string[]>
+  export function acb2wav (acb: string, singleComplete?: (current: number, total: number, filename: string) => void): Promise<AcbResult>
+  export function acb2mp3 (acb: string, singleComplete?: (current: number, total: number, filename: string) => void): Promise<AcbResult>
 }
 
 declare interface Core {
@@ -88,11 +90,11 @@ declare interface Core {
     downloadIcon (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
   }
   audio: {
-    acb2hca (acb: string, targetDir?: string): Promise<string[]>
+    acb2hca (acb: string, targetDir?: string): Promise<AcbResult>
     hca2wav (hca: string): Promise<string>
     wav2mp3 (wav: string, mp3?: string): Promise<string>
     hca2mp3 (hca: string, mp3?: string): Promise<string>
-    acb2wav (acb: string, singleComplete?: (current: number, total: number, filename: string) => void): Promise<string[]>
-    acb2mp3 (acb: string, singleComplete?: (current: number, total: number, filename: string) => void): Promise<string[]>
+    acb2wav (acb: string, singleComplete?: (current: number, total: number, filename: string) => void): Promise<AcbResult>
+    acb2mp3 (acb: string, singleComplete?: (current: number, total: number, filename: string) => void): Promise<AcbResult>
   }
 }
