@@ -58,7 +58,7 @@ export class Downloader {
 
   download (tasks: any[][], start?: (task: any[]) => void, onData?: (prog: ProgressInfo) => void, complete?: (task: any[]) => void, stop?: (task: any[]) => void): Promise<string>
   batchDownload (manifests: { name: string; hash: string; [x: string]: any }[], targetDir: string, start?: (task: any[]) => void, onData?: (prog: ProgressInfo) => void, complete?: (task: any[]) => void, stop?: (task: any[]) => void): Promise<string>
-  stop (stopCallback: () => void): void
+  stop (stopCallback?: () => void): void
 
   downloadManifest (resVer: number | string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
   downloadAsset (hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>

@@ -5,7 +5,7 @@ const path = require('path')
 const fs = require('fs')
 
 const LEFT = '\x1b[666D'
-const dler = cgss.downloader
+const dler = new cgss.Downloader()
 
 describe('cgss.downloader', () => {
   it('cgss.downloader.downloadManifest()', async function () {
