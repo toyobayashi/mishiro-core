@@ -10,16 +10,9 @@
 ## Usage
 
 ``` javascript
-const { downloader, Client, audio, util } = require('mishiro-core')
+const { Downloader, Client, audio, util } = require('mishiro-core')
 
-const {
-  downloadManifest,
-  downloadAsset,
-  downloadSound,
-  downloadDatabase,
-  downloadSpread,
-  downloadIcon
-} = downloader
+let downloader = new Downloader()
 
 const {
   acb2hca,
@@ -32,7 +25,6 @@ const {
 
 const {
   request,
-  download,
   lz4dec
 } = util
 
@@ -40,7 +32,7 @@ const client = new Client('123456789:987654321:1a3b5c7d-1234-4bcd-9efa-8e6f4a2b7
 
 client.check().then(resVer => console.log(resVer))
 
-// see test.
+// see index.d.ts and test.
 ```
 
 ## License
