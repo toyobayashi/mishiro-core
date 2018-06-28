@@ -99,10 +99,10 @@ class Lz4 {
   }
 }
 
-function lz4dec (input, output = 'unity3d') {
+function lz4dec (input, output = '.unity3d') {
   let dec = new Lz4(fs.readFileSync(input))
-  fs.writeFileSync(input + '.' + output, dec.decompress())
-  return input + '.' + output
+  fs.writeFileSync(input + output, dec.decompress())
+  return input + output
 }
 
 module.exports = lz4dec
