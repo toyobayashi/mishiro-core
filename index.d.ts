@@ -71,6 +71,7 @@ export class Downloader {
 export namespace util {
   export function request (options: RequestOption, callback: (err: Error | null, res: string | null | undefined, path: string  | null | undefined) => void): ClientRequest | undefined
   export function lz4dec (input: string, output?: string): string
+  export function unpackTexture2D (assetBundle: string, targetDir?: string): Promise<string[]>
 }
 
 declare type AcbResult = string[] & { dirname: string }
