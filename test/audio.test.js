@@ -5,7 +5,7 @@ const path = require('path')
 const fs = require('fs-extra')
 
 const LEFT = '\x1b[666D'
-const dler = cgss.downloader
+const dler = new cgss.Downloader()
 const audio = cgss.audio
 
 describe('cgss.audio.acb2hca()', () => {

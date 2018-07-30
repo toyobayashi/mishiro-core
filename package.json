@@ -1,6 +1,6 @@
 {
   "name": "mishiro-core",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "CGSS JavaScript library in Node.js",
   "main": "index.js",
   "scripts": {
@@ -15,6 +15,10 @@
     "mishiro"
   ],
   "author": "toyobayashi",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toyobayashi/mishiro-core.git"
+  },
   "license": "MIT",
   "devDependencies": {
     "eslint": "^4.19.1",
@@ -29,7 +33,7 @@
   },
   "dependencies": {
     "acb": "^1.2.2",
-    "fs-extra": "^6.0.1",
+    "fs-extra": "^7.0.0",
     "hca-decoder": "^1.0.1",
     "jimp": "^0.2.28",
     "lame": "^1.2.4",
