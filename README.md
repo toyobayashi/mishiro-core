@@ -25,7 +25,8 @@ const {
 
 const {
   request,
-  lz4dec
+  lz4dec,
+  unpackTexture2D
 } = util
 
 const client = new Client('123456789:987654321:1a3b5c7d-1234-4bcd-9efa-8e6f4a2b7c5d')

@@ -1,4 +1,4 @@
-import { ClientRequest } from 'http'
+import * as requestNamespace from 'request'
 
 export interface RequestOption {
   url: string
@@ -51,7 +51,7 @@ export class Client {
 export class Downloader {
   tasks: any[][] | { name: string; hash: string; [x: string]: any }[]
   index: number
-  req: ClientRequest | null | undefined
+  req: requestNamespace.Request | null
   isContinue: boolean
 
   downloadOne (u: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
@@ -69,7 +69,7 @@ export class Downloader {
 }
 
 export namespace util {
-  export function request (options: RequestOption, callback: (err: Error | null, res: string | null | undefined, path: string  | null | undefined) => void): ClientRequest | undefined
+  export const request: typeof requestNamespace
   export function lz4dec (input: string, output?: string): string
   export function unpackTexture2D (assetBundle: string, targetDir?: string): Promise<string[]>
 }
