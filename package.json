@@ -1,6 +1,6 @@
 {
   "name": "mishiro-core",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "CGSS JavaScript library in Node.js",
   "main": "index.js",
   "scripts": {
