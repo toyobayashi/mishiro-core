@@ -24,7 +24,6 @@ const {
 } = audio
 
 const {
-  request,
   lz4dec,
   unpackTexture2D
 } = util
