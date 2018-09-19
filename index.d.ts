@@ -42,10 +42,21 @@ export class Client {
   udid: string
   sid: string
   resVer: string
-  post: (path: string, args: any) => Promise<ServerResponse>
-  check: () => Promise<number>
-  getProfile: (viewer: string | number) => Promise<ServerResponse>
-  getGachaRate: (gacha: string | number) => Promise<ServerResponse>
+  post (path: string, args: any): Promise<ServerResponse>
+  check (): Promise<number>
+  getProfile (viewer: string | number): Promise<ServerResponse>
+  getGachaRate (gacha: string | number): Promise<ServerResponse>
+  readonly static VIEWER_ID_KEY: string
+  readonly static SID_KEY: string
+  static cryptoGrapher: {
+    encode (s: string): string
+    decode (s: string): string
+  }
+  static cryptAES: {
+    encryptRJ256 (s: string | Buffer, iv: string, key: string): string
+    decryptRJ256 (s: string | Buffer, iv: string, key: string): string
+  }
+  static decryptBody (body: string, iv: string): any
 }
 
 export class Downloader {
