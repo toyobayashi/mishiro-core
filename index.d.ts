@@ -46,8 +46,8 @@ export class Client {
   check (): Promise<number>
   getProfile (viewer: string | number): Promise<ServerResponse>
   getGachaRate (gacha: string | number): Promise<ServerResponse>
-  readonly static VIEWER_ID_KEY: string
-  readonly static SID_KEY: string
+  static readonly VIEWER_ID_KEY: string
+  static readonly SID_KEY: string
   static cryptoGrapher: {
     encode (s: string): string
     decode (s: string): string
