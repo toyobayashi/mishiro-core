@@ -65,7 +65,8 @@ class Def {
         d = d.readInt32LE()
       } else if (this.typeName === 'int64') {
         // throw new Error('int64')
-        d = d.readUIntLE(8)
+        d.readUIntLE(1)
+        d = d.readUIntLE(7)
       } else if (this.typeName === 'char') {
         d = Buffer.from(d[0]).toString('ascii')
       } else if (this.typeName === 'bool') {
