@@ -525,17 +525,21 @@ function writeImg (img, filename) {
 }
 
 function unpackTexture2D (assetBundle, targetDir = dirname(assetBundle)) {
-  let asset = new Asset(fs.readFileSync(assetBundle))
-  let promisearr = []
-  for (const obj of asset.objs) {
-    if (obj['image data']) {
-      let img = convertTexture2D(obj)
-      img.flip(false, true)
-      let filename = obj.m_Name + '.' + img.getExtension()
-      promisearr.push(writeImg(img, join(targetDir, filename)))
+  try {
+    let asset = new Asset(fs.readFileSync(assetBundle))
+    let promisearr = []
+    for (const obj of asset.objs) {
+      if (obj['image data']) {
+        let img = convertTexture2D(obj)
+        img.flip(false, true)
+        let filename = obj.m_Name + '.' + img.getExtension()
+        promisearr.push(writeImg(img, join(targetDir, filename)))
+      }
     }
+    return Promise.all(promisearr)
+  } catch (err) {
+    return Promise.reject(err)
   }
-  return Promise.all(promisearr)
 }
 
 module.exports = unpackTexture2D
