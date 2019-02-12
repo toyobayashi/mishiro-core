@@ -56,7 +56,7 @@ export class Client {
     encryptRJ256 (data: string, iv: Buffer, key: string): Buffer
     decryptRJ256 (data: Buffer, iv: Buffer, key: string): string
   }
-  static decryptBody (body: string, iv: string): any
+  static decryptBody (body: string, iv: Buffer): any
 }
 
 export class Downloader {
