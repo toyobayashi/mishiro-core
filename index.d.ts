@@ -53,8 +53,8 @@ export class Client {
     decode (s: string): string
   }
   static cryptAES: {
-    encryptRJ256 (s: string | Buffer, iv: string, key: string): string
-    decryptRJ256 (s: string | Buffer, iv: string, key: string): string
+    encryptRJ256 (data: string, iv: Buffer, key: string): Buffer
+    decryptRJ256 (data: Buffer, iv: Buffer, key: string): string
   }
   static decryptBody (body: string, iv: string): any
 }
