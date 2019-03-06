@@ -42,7 +42,7 @@ export class Client {
   udid: string
   sid: string
   resVer: string
-  post (path: string, args: any): Promise<ServerResponse>
+  post (path: string, args: any, headerEx?: { [x: string]: string }): Promise<ServerResponse>
   check (): Promise<number>
   getProfile (viewer: string | number): Promise<ServerResponse>
   getGachaRate (gacha: string | number): Promise<ServerResponse>
