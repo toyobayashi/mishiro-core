@@ -97,14 +97,16 @@ class Lz4 {
     if (size === 255) return size + this.readAdditionalSize(reader)
     else return size
   }
+
+  static decompress (input, output = '.unity3d') {
+    if (Buffer.isBuffer(input)) {
+      return (new Lz4(input)).decompress()
+    }
+
+    let dec = new Lz4(fs.readFileSync(input))
+    fs.writeFileSync(input + output, dec.decompress())
+    return input + output
+  }
 }
 
-function lz4dec (input, output = '.unity3d') {
-  let dec = new Lz4(fs.readFileSync(input))
-  fs.writeFileSync(input + output, dec.decompress())
-  return input + output
-}
-
-module.exports = lz4dec
-
-module.exports.Lz4 = Lz4
+module.exports = Lz4

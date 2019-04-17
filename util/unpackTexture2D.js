@@ -1,8 +1,8 @@
-const Reader = require('./reader')
+const Reader = require('./reader.js')
 const Jimp = require('jimp')
 const fs = require('fs-extra')
 const { join, dirname } = require('path')
-const { Lz4 } = require('./lz4')
+const Lz4 = require('./lz4.js')
 const path = require('path')
 
 const supportBigInt = typeof BigInt === 'function'
@@ -210,7 +210,7 @@ function unlz4 (data, uncompSize) {
   buf.writeUInt32LE(uncompSize, 4)
   buf.writeUInt32LE(data.length, 8)
   const buffer = Buffer.concat([buf, data])
-  const d = new Lz4(buffer).decompress()
+  const d = Lz4.decompress(buffer)
   if (d.length !== uncompSize) {
     throw new Error(`${d.length} !== ${uncompSize}.`)
   }

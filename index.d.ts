@@ -79,8 +79,25 @@ export class Downloader {
   downloadIcon (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
 }
 
+declare class FileReader {
+  constructor (buf: Buffer)
+  readUInt8 (): number
+  readUInt16LE (): number
+  readUInt32LE (): number
+  copy (target: Buffer | Uint8Array, targetStart: number, thisSize: number): void
+  seek (pos: number): void
+  tell (): number
+}
+
 export namespace util {
-  export function lz4dec (input: string, output?: string): string
+  export class Lz4 {
+    constructor (buf: Buffer)
+    reader: FileReader
+    decompress (): Buffer
+    readAdditionalSize (): number
+    static decompress (input: Buffer): Buffer
+    static decompress (input: string, output?: string): string
+  }
   export function unpackTexture2D (assetBundle: string, targetDir?: string): Promise<string[]>
 }
 
