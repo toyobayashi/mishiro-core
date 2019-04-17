@@ -2,4 +2,5 @@ download/
 node_modules/
 test/
 script/
+.vscode/
 .eslintrc.json

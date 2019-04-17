@@ -106,3 +106,5 @@ function lz4dec (input, output = '.unity3d') {
 }
 
 module.exports = lz4dec
+
+module.exports.Lz4 = Lz4

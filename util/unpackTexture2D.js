@@ -1,12 +1,32 @@
-const { Reader } = require('acb')
+const Reader = require('./reader')
 const Jimp = require('jimp')
 const fs = require('fs-extra')
 const { join, dirname } = require('path')
+const { Lz4 } = require('./lz4')
+const path = require('path')
+
+const supportBigInt = typeof BigInt === 'function'
 
 class UnityReader extends Reader {
   constructor (buf) {
     super(buf)
     this.alignOff = 0
+  }
+
+  seekEnd (p) {
+    this.pos = this.buf.length - p
+  }
+
+  skip (off) {
+    this.pos += off
+  }
+
+  read (cnt) {
+    if (cnt === undefined) {
+      cnt = this.buf.length - this.pos
+    }
+    this.skip(cnt)
+    return this.buf.slice(this.pos - cnt, this.pos)
   }
 
   align (n) {
@@ -15,7 +35,7 @@ class UnityReader extends Reader {
   readStr () {
     let str = []
     while (true) {
-      let b = this.read()[0]
+      let b = this.read(1)[0]
       if (b === 0) break
       else str.push(b)
     }
@@ -65,14 +85,25 @@ class Def {
         d = d.readInt32LE()
       } else if (this.typeName === 'int64') {
         // throw new Error('int64')
-        d.readUIntLE(1)
-        d = d.readUIntLE(7)
+        if (supportBigInt) {
+          let n = BigInt(0)
+          for (let i = BigInt(0); i < BigInt(d.length); i++) {
+            n += (BigInt(d[i]) << (BigInt(i) * BigInt(8)))
+          }
+          n = BigInt.asIntN(64, n)
+          d = n
+        } else {
+          const isMinus = (d.readIntLE(2, 6) < 0)
+          d = d.readUIntLE(0, 6) * (isMinus ? -1 : 1)
+        }
       } else if (this.typeName === 'char') {
         d = Buffer.from(d[0]).toString('ascii')
       } else if (this.typeName === 'bool') {
         d = d[0]
       } else if (this.typeName === 'float') {
         d = d.readFloatLE()
+      } else if (this.typeName === 'unsigned int') {
+        d = d.readUInt32LE()
       }
       return d
     }
@@ -146,6 +177,121 @@ const baseStrings = {
   1006: 'Vector4f'
 }
 
+class UnityRaw {
+  constructor (s, streamVer) {
+    this.s = s
+    let buf = this.s.read(16)
+    const size = buf.readUInt32BE(0)
+    const hdrSize = buf.readUInt32BE(4)
+    const count1 = buf.readUInt32BE(8)
+    const count2 = buf.readUInt32BE(12)
+
+    let ptr = hdrSize
+
+    buf = this.s.read(count2 * 8)
+
+    if (streamVer >= 2) {
+      this.s.read(4)
+    }
+
+    if (streamVer >= 3) {
+      let dataHdrSize = this.s.read(4).readUInt32BE()
+      ptr += dataHdrSize
+    }
+
+    this.s.seek(ptr)
+
+    this.data = this.s.read()
+  }
+}
+
+function unlz4 (data, uncompSize) {
+  let buf = Buffer.alloc(16, 0)
+  buf.writeUInt32LE(uncompSize, 4)
+  buf.writeUInt32LE(data.length, 8)
+  const buffer = Buffer.concat([buf, data])
+  const d = new Lz4(buffer).decompress()
+  if (d.length !== uncompSize) {
+    throw new Error(`${d.length} !== ${uncompSize}.`)
+  }
+  return d
+}
+
+class UnityFS {
+  constructor (s, streamVer) {
+    this.s = s
+    // let buf = this.s.read(20)
+    const size = this.s.readUInt64BE()
+    const hdrCompSize = this.s.readUInt32BE()
+    const hdrUncompSize = this.s.readUInt32BE()
+    const flags = this.s.readUInt32BE()
+
+    let ciblock
+    if ((flags & 0x80) === 0x00) {
+      ciblock = this.s.read(hdrCompSize)
+    } else {
+      let ptr = this.s.tell()
+      this.s.seekEnd(hdrCompSize)
+      ciblock = this.s.read(hdrCompSize)
+      this.s.seek(ptr)
+    }
+
+    let comp = flags & 0x3f
+    if (comp === 0) {
+      // pass
+    } else if (comp === 2 || comp === 3) {
+      ciblock = unlz4(ciblock, hdrUncompSize)
+    } else {
+      throw new Error(`Unsupported compression format ${comp}`)
+    }
+
+    let cidata = new UnityReader(ciblock)
+    let guid = cidata.read(16)
+    let numBlocks = cidata.read(4).readUInt32BE()
+    let blocks = []
+
+    for (let i = 0; i < numBlocks; i++) {
+      let busize = cidata.readUInt32BE()
+      let bcsize = cidata.readUInt32BE()
+      let bflags = cidata.readUInt16BE()
+      if (busize !== bcsize) {
+        throw new Error('Compressed blocks not supported yet')
+      }
+
+      blocks.push(this.s.read(busize))
+    }
+
+    this.blockdata = Buffer.concat(blocks)
+
+    let numNodes = cidata.read(4).readUInt32BE()
+    this.files = []
+    this.filesByName = {}
+
+    let p = supportBigInt ? BigInt(0) : 0
+
+    for (let i = 0; i < numNodes; i++) {
+      let ofs = cidata.readUInt64BE()
+      let size = cidata.readUInt64BE()
+      let status = cidata.readUInt32BE()
+
+      let name = cidata.readStr()
+
+      let data = []
+
+      for (let j = p + ofs; j < p + ofs + size; j++) {
+        data.push(this.blockdata[j])
+      }
+
+      data = Buffer.from(data)
+
+      this.files.push([name, data])
+      this.filesByName[name] = data
+    }
+
+    this.name = this.files[0][0]
+  }
+}
+
 class Asset {
   constructor (buf) {
     this.s = new UnityReader(buf)
@@ -154,37 +300,42 @@ class Asset {
     this.unityVersion = this.s.readStr()
     this.unityRevision = this.s.readStr()
 
-    let hdrSize
+    // let hdrSize
 
     if (t === 'UnityRaw') {
-      let size = this.s.readUInt32BE()
-      hdrSize = this.s.readUInt32BE()
-      let count1 = this.s.readUInt32BE()
-      let count2 = this.s.readUInt32BE()
+      // let size = this.s.readUInt32BE()
+      // hdrSize = this.s.readUInt32BE()
+      // let count1 = this.s.readUInt32BE()
+      // let count2 = this.s.readUInt32BE()
 
-      this.s.read(count2 * 8)
+      // this.s.read(count2 * 8)
 
-      if (streamVer >= 2) {
-        this.s.read(4)
-      }
-      if (streamVer >= 3) {
-        let dataHdrSize = this.s.readUInt32BE()
-        hdrSize += dataHdrSize
-      }
+      // if (streamVer >= 2) {
+      //   this.s.read(4)
+      // }
+      // if (streamVer >= 3) {
+      //   let dataHdrSize = this.s.readUInt32BE()
+      //   hdrSize += dataHdrSize
+      // }
+      let ur = new UnityRaw(this.s, streamVer)
+      this.fs = undefined
+      this.s = new UnityReader(ur.data)
     } else if (t === 'UnityFS') {
-      this.s.read(8) // size
-      let compressionHrdSize = this.s.readUInt32BE()
-      let dataHdrSize = this.s.readUInt32BE()
-      let flags = this.s.readUInt32BE()
-      hdrSize = this.s.tell()
-      if ((flags & 0x80) === 0x00) {
-        hdrSize += compressionHrdSize
-      }
+      // this.s.read(8) // size
+      // let compressionHrdSize = this.s.readUInt32BE()
+      // let dataHdrSize = this.s.readUInt32BE()
+      // let flags = this.s.readUInt32BE()
+      // hdrSize = this.s.tell()
+      // if ((flags & 0x80) === 0x00) {
+      //   hdrSize += compressionHrdSize
+      // }
+      this.fs = new UnityFS(this.s, streamVer)
+      this.s = new UnityReader(this.fs.files[0][1])
     } else {
       throw new Error(`Unsupported resource type ${t}`)
     }
 
-    this.s.seek(hdrSize)
+    // this.s.seek(hdrSize)
     this.off = this.s.alignOff = this.s.tell()
     this.tableSize = this.s.readUInt32BE()
     this.dataEnd = this.s.readUInt32BE()
@@ -221,7 +372,8 @@ class Asset {
       let save = this.s.tell()
       this.s.seek(off + this.dataOffset + this.off)
 
-      objs.push(this.defs[classId].read(this.s))
+      let obj = this.defs[classId].read(this.s)
+      objs.push(obj)
       this.s.seek(save)
     }
     return objs
@@ -418,11 +570,11 @@ const TEX_FORMAT = [].concat(TEX_FORMAT_NONALPHA, TEX_FORMAT_NONALPHA)
 
 // ==============================================================================
 
-function convertTexture2D (texture) {
+function convertTexture2D (texture, data) {
   let width = texture.m_Width
   let height = texture.m_Height
   let format = texture.m_TextureFormat
-  let data = texture['image data']
+  data = data || texture['image data']
 
   let img = new Jimp(width, height)
   let x = 0
@@ -529,12 +681,20 @@ function unpackTexture2D (assetBundle, targetDir = dirname(assetBundle)) {
     let asset = new Asset(fs.readFileSync(assetBundle))
     let promisearr = []
     for (const obj of asset.objs) {
-      if (obj['image data']) {
-        let img = convertTexture2D(obj)
-        img.flip(false, true)
-        let filename = obj.m_Name + '.' + img.getExtension()
-        promisearr.push(writeImg(img, join(targetDir, filename)))
+      let data = obj['image data']
+      if ((!data || data.length === 0) && obj.m_StreamData !== undefined && asset.fs) {
+        let sd = obj.m_StreamData
+        let name = path.basename(sd.path.toString())
+        data = asset.fs.filesByName[name].slice(sd.offset).slice(0, sd.size)
       }
+      if (!data || data.length === 0) {
+        continue
+      }
+
+      let img = convertTexture2D(obj, data)
+      img.flip(false, true)
+      let filename = obj.m_Name + '.' + img.getExtension()
+      promisearr.push(writeImg(img, join(targetDir, filename)))
     }
     return Promise.all(promisearr)
   } catch (err) {
