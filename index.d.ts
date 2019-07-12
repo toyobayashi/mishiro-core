@@ -1,4 +1,4 @@
-import * as request from 'request'
+import * as http from 'http'
 
 export interface RequestOption {
   url: string
@@ -62,8 +62,9 @@ export class Client {
 export class Downloader {
   tasks: any[][] | { name: string; hash: string; [x: string]: any }[]
   index: number
-  req: request.Request | null
+  req: http.ClientRequest | null
   isContinue: boolean
+  rename: boolean
 
   downloadOne (u: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
 
