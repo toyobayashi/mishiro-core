@@ -11,7 +11,7 @@ const audio = cgss.audio
 describe('cgss.audio.acb2hca()', () => {
   it('card_200087.acb', async function () {
     this.timeout(Infinity)
-    let acb = await dler.downloadSound('v', '930a090e0b5e6f10963382f1726b4862', path.join(__dirname, '../download', 'card_200087.acb'), (prog) => {
+    let acb = await dler.downloadSound('v', 'd63cbac8a78f70c8459036b5fef1c9e2', path.join(__dirname, '../download', 'card_200087.acb'), (prog) => {
       progress(prog.name, prog.current, prog.max, prog.loading)
     })
     console.log()
@@ -24,7 +24,7 @@ describe('cgss.audio.acb2hca()', () => {
 
   it('bgm_commu_kawaii.acb', async function () {
     this.timeout(Infinity)
-    let acb = await dler.downloadSound('b', '90d50018ddf85619af28ce8496ba77d2', path.join(__dirname, '../download', 'bgm_commu_kawaii.acb'), (prog) => {
+    let acb = await dler.downloadSound('b', 'e42d4394f86aafdc6a46e1d344a07ea9', path.join(__dirname, '../download', 'bgm_commu_kawaii.acb'), (prog) => {
       progress(prog.name, prog.current, prog.max, prog.loading)
     })
     console.log()
@@ -37,7 +37,7 @@ describe('cgss.audio.acb2hca()', () => {
 
   it('bgm_commu_ashita.acb', async function () {
     this.timeout(Infinity)
-    let acb = await dler.downloadSound('b', 'ad2cb44a45bcd6355dd009a6f55ddeaa', path.join(__dirname, '../download', 'bgm_commu_ashita.acb'), (prog) => {
+    let acb = await dler.downloadSound('b', 'e2f82032ef9512b467554fa45c9e1dfd', path.join(__dirname, '../download', 'bgm_commu_ashita.acb'), (prog) => {
       progress(prog.name, prog.current, prog.max, prog.loading)
     })
     console.log()
@@ -79,7 +79,7 @@ describe('cgss.audio.hca2mp3()', () => {
 describe('cgss.audio.acb2wav()', () => {
   it('card_100008.acb', async function () {
     this.timeout(Infinity)
-    let acb = await dler.downloadSound('v', '6ba473da94c95be87da9e23fc0f3b8ce', path.join(__dirname, '../download', 'card_100008.acb'), (prog) => {
+    let acb = await dler.downloadSound('v', 'caf120711c3b5e6ffea0ad50246f1747', path.join(__dirname, '../download', 'card_100008.acb'), (prog) => {
       progress(prog.name, prog.current, prog.max, prog.loading)
     })
     console.log()
@@ -94,7 +94,7 @@ describe('cgss.audio.acb2wav()', () => {
 
   it('bgm_commu_ankira.acb', async function () {
     this.timeout(Infinity)
-    let acb = await dler.downloadSound('b', 'f1fcfc8fb9c22d8c1cabc677a45d16f3', path.join(__dirname, '../download', 'bgm_commu_ankira.acb'), (prog) => {
+    let acb = await dler.downloadSound('b', 'd67d2ab75f2a90eb5024146921da6cf2', path.join(__dirname, '../download', 'bgm_commu_ankira.acb'), (prog) => {
       progress(prog.name, prog.current, prog.max, prog.loading)
     })
     console.log()
@@ -111,7 +111,7 @@ describe('cgss.audio.acb2wav()', () => {
 describe('cgss.audio.acb2mp3()', () => {
   it('card_100071.acb', async function () {
     this.timeout(Infinity)
-    let acb = await dler.downloadSound('v', 'd7c1febffb83f9973d76a557056dd727', path.join(__dirname, '../download', 'card_100071.acb'), (prog) => {
+    let acb = await dler.downloadSound('v', 'cd6af2ed9fa3a70f92ebee9946e8300e', path.join(__dirname, '../download', 'card_100071.acb'), (prog) => {
       progress(prog.name, prog.current, prog.max, prog.loading)
     })
     console.log()
