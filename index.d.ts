@@ -42,6 +42,8 @@ export class Client {
   udid: string
   sid: string
   resVer: string
+  electronNet: boolean
+  useElectronNet (value: boolean): void
   post (path: string, args: any, headerEx?: { [x: string]: string }): Promise<ServerResponse>
   check (): Promise<number>
   getProfile (viewer: string | number): Promise<ServerResponse>
@@ -65,7 +67,8 @@ export class Downloader {
   req: http.ClientRequest | null
   isContinue: boolean
   rename: boolean
-
+  electronNet: boolean
+  useElectronNet (value: boolean): void
   downloadOne (u: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
 
   download (tasks: any[][], start?: (task: any[]) => void, onData?: (prog: ProgressInfo) => void, complete?: (task: any[]) => void, stop?: (task: any[]) => void): Promise<string[]>
