@@ -11,6 +11,7 @@
   "rules": {
     "eqeqeq": 0,
     "no-irregular-whitespace": 0,
-    "no-new": 0
+    "no-new": 0,
+    "quote-props": 0
   }
 }

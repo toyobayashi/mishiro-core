@@ -4,3 +4,5 @@ test/
 script/
 .vscode/
 .eslintrc.json
+build/
+dist/

@@ -3,3 +3,5 @@ download/*
 node_modules/
 script/
 .vscode/
+build/
+dist/
