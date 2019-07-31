@@ -8,6 +8,9 @@ const LEFT = '\x1b[666D'
 const dler = new cgss.Downloader()
 const audio = cgss.audio
 
+cgss.config.setCallbackInterval(500)
+console.log(cgss.config.list())
+
 describe('cgss.audio.acb2hca()', () => {
   it('card_200087.acb', async function () {
     this.timeout(Infinity)
@@ -61,9 +64,17 @@ describe('cgss.audio.hca2wav()', () => {
 describe('cgss.audio.wav2mp3()', () => {
   it('bgm_commu_kawaii.wav', async function () {
     this.timeout(Infinity)
-    const mp3 = await audio.wav2mp3(path.join(__dirname, '../download/_acb_bgm_commu_kawaii.acb', 'bgm_commu_kawaii.wav'))
+    let callCount = 0
+    const mp3 = await audio.wav2mp3(
+      path.join(__dirname, '../download/_acb_bgm_commu_kawaii.acb', 'bgm_commu_kawaii.wav'),
+      null,
+      function (_data) {
+        callCount++
+      }
+    )
     assert.ok(path.parse(mp3).base === 'bgm_commu_kawaii.mp3')
     assert.ok(fs.existsSync(mp3))
+    assert.ok(callCount !== 0)
   })
 })
 
@@ -84,7 +95,7 @@ describe('cgss.audio.acb2wav()', () => {
     })
     console.log()
     assert.ok(acb === path.join(__dirname, '../download', 'card_100008.acb'))
-    const l = await audio.acb2wav(acb, (c, t, n) => console.log(c, t, n))
+    const l = await audio.acb2wav(acb/* , (c, t, n) => console.log(c, t, n) */)
     assert.ok(l.indexOf('') === -1)
     for (let i = 0; i < l.length; i++) {
       assert.ok(path.parse(l[i]).ext === '.wav')
@@ -116,7 +127,7 @@ describe('cgss.audio.acb2mp3()', () => {
     })
     console.log()
     assert.ok(acb === path.join(__dirname, '../download', 'card_100071.acb'))
-    const l = await audio.acb2mp3(acb, (c, t, n) => console.log(c, t, n))
+    const l = await audio.acb2mp3(acb/* , (c, t, n) => console.log(c, t, n) */)
     assert.ok(l.indexOf('') === -1)
     for (let i = 0; i < l.length; i++) {
       assert.ok(path.parse(l[i]).ext === '.mp3')

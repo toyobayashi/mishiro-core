@@ -14,6 +14,7 @@ class LameAsyncWorker : public Napi::AsyncWorker {
   private:
     std::string _wavPath;
     std::string _mp3Path;
+    Napi::ThreadSafeFunction _tsfn;
 };
 
 #endif // ! __LAME_ASYNC_WORKER_H__

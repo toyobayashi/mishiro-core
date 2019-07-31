@@ -1,4 +1,3 @@
-// 包含DemoAsyncWorker类的头文件，实现将在后面给出
 #include "./LameAsyncWorker.h"
 
 using namespace Napi;
