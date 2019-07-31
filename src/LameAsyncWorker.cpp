@@ -14,13 +14,29 @@ typedef struct EncodeData {
   double loaded;
 } EncodeData;
 
+int LameAsyncWorker::_bitRate = 128;
+
+void LameAsyncWorker::setBitRate(int rate) {
+  // 16 24 32 40 48 56 64 80 96 112 128 160 192 224 256 320
+  if (rate < 16) {
+    rate = 16;
+  } else if (rate > 320) {
+    rate = 320;
+  }
+  LameAsyncWorker::_bitRate = rate;
+}
+
+int LameAsyncWorker::getBitRate() {
+  return _bitRate;
+}
+
 LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, Function& callback): _wavPath(wavPath), _mp3Path(mp3Path), AsyncWorker(callback) {
   _tsfn = ThreadSafeFunction::New(
     Env(),
     callback,                // JavaScript function called asynchronously
     "wav2mp3Callback",       // Name
     0,                       // Unlimited queue
-    1/* ,                       // Only two thread will use this initially
+    1/* ,                       // Only one thread will use this initially
     []( Napi::Env ) {        // Finalizer used to clean threads up
       nativeThread.join();
     }  */);
@@ -31,9 +47,9 @@ LameAsyncWorker::~LameAsyncWorker() {}
 void LameAsyncWorker::Execute() {
   unsigned int read;
   unsigned int write;
-  int strlength = 0;
 
 #ifdef _WIN32
+  int strlength = 0;
   wchar_t __wwavPath[MAX_PATH] = { 0 };
   strlength = MultiByteToWideChar(CP_UTF8, 0, _wavPath.c_str(), -1, NULL, 0);
   MultiByteToWideChar(CP_UTF8, 0, _wavPath.c_str(), -1, __wwavPath, strlength);
@@ -49,8 +65,6 @@ void LameAsyncWorker::Execute() {
 
   Wav wavstruct;
   fread(&wavstruct, 1, sizeof(wavstruct), wav);
-  // printf("Sample Rate: %d\n", wavstruct.fmt.SampleRate);
-  // printf("Channel: %d\n", wavstruct.fmt.NumChannels);
 
   long start = 4 * 1024;
   fseek(wav, 0L, SEEK_END);
@@ -77,30 +91,30 @@ void LameAsyncWorker::Execute() {
 
   const int CHANNEL = (int)wavstruct.fmt.NumChannels;
 
-  short int *wav_buffer = new short int[WAV_SIZE * CHANNEL]; // (short int*)malloc(WAV_SIZE * CHANNEL * sizeof(short int));
-  unsigned char *mp3_buffer = new unsigned char[MP3_SIZE]; // (unsigned char*)malloc(MP3_SIZE * sizeof(unsigned char));
+  short int *wavBuffer = new short int[WAV_SIZE * CHANNEL];
+  unsigned char *mp3Buffer = new unsigned char[MP3_SIZE];
 
   lame_t lame = lame_init();
   lame_set_in_samplerate(lame, (int)wavstruct.fmt.SampleRate);
   lame_set_num_channels(lame, CHANNEL);
-  lame_set_mode(lame, CHANNEL == 1 ? MONO : STEREO);
+  lame_set_mode(lame, CHANNEL == 1 ? MONO : (_bitRate < 160 ? JOINT_STEREO : STEREO));
   // lame_set_VBR(lame, vbr_default);
-  lame_set_brate(lame, 128);
+  lame_set_brate(lame, _bitRate);
   lame_init_params(lame);
 
-  long total = start;
+  long loaded = start;
   do {
-    read = fread(wav_buffer, sizeof(short int) * CHANNEL, WAV_SIZE, wav);
-    total += read * sizeof(short int) * CHANNEL;
+    read = fread(wavBuffer, sizeof(short int) * CHANNEL, WAV_SIZE, wav);
+    loaded += read * sizeof(short int) * CHANNEL;
     if (read != 0) {
       if (CHANNEL == 1) {
-        write = lame_encode_buffer(lame, wav_buffer, NULL, read, mp3_buffer, MP3_SIZE);
+        write = lame_encode_buffer(lame, wavBuffer, NULL, read, mp3Buffer, MP3_SIZE);
       } else {
-        write = lame_encode_buffer_interleaved(lame, wav_buffer, read, mp3_buffer, MP3_SIZE);
+        write = lame_encode_buffer_interleaved(lame, wavBuffer, read, mp3Buffer, MP3_SIZE);
       }
       
       EncodeData* data = new EncodeData;
-      data->loaded = (double)total;
+      data->loaded = (double)loaded;
       data->total = (double)wavsize;
       _tsfn.BlockingCall(data, [](Napi::Env env, Function jsCallback, EncodeData* value) {
         HandleScope scope(env);
@@ -113,13 +127,13 @@ void LameAsyncWorker::Execute() {
         delete value;
       });
     } else {
-      write = lame_encode_flush(lame, mp3_buffer, MP3_SIZE);
+      write = lame_encode_flush(lame, mp3Buffer, MP3_SIZE);
     }
-    fwrite(mp3_buffer, sizeof(unsigned char), write, mp3);
+    fwrite(mp3Buffer, sizeof(unsigned char), write, mp3);
   } while (read != 0);
 
-  delete[] wav_buffer;
-  delete[] mp3_buffer;
+  delete[] wavBuffer;
+  delete[] mp3Buffer;
   // lame_mp3_tags_fid(lame, mp3);
   lame_close(lame);
   fclose(mp3);

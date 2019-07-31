@@ -96,6 +96,8 @@ declare class FileReader {
 declare class Config {
   getCallbackInterval (): number
   setCallbackInterval (num: number): void
+  getBitRate (): number
+  setBitRate (num: number): void
   list (): { [key: string]: any }
 }
 

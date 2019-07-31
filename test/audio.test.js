@@ -9,6 +9,7 @@ const dler = new cgss.Downloader()
 const audio = cgss.audio
 
 cgss.config.setCallbackInterval(500)
+cgss.config.setBitRate(192)
 console.log(cgss.config.list())
 
 describe('cgss.audio.acb2hca()', () => {

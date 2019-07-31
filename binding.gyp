@@ -1,6 +1,6 @@
 {
   "variables": {
-    "module_name": "wav2mp3",
+    "module_name": "lame",
     "module_path": "./dist",
     "PRODUCT_DIR": "./build/Release"
   },

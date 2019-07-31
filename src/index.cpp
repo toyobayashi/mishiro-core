@@ -32,9 +32,35 @@ static Value _wav2mp3(const CallbackInfo& info) {
   return env.Undefined();
 }
 
-Object init(Env env, Object exports) {
-  Function module = Function::New(env, _wav2mp3);
-  return module;
+static Value _setBitRate(const CallbackInfo& info) {
+  Env env = info.Env();
+
+  if (info.Length() != 1) {
+    Error::New(env, "setBitRate(): arguments.length !== 1").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  if (!info[0].IsNumber()) {
+    Error::New(env, "setBitRate(): typeof arguments[0] !== 'number'").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  LameAsyncWorker::setBitRate(info[0].As<Number>().Int32Value());
+  return env.Undefined();
 }
 
-NODE_API_MODULE(NODE_GYP_MODULE_NAME, init)
+static Value _getBitRate(const CallbackInfo& info) {
+  Env env = info.Env();
+
+  return Number::New(env, (double)LameAsyncWorker::getBitRate());
+}
+
+static Object _index(Env env, Object exports) {
+  exports["wav2mp3"] = Function::New(env, _wav2mp3, "wav2mp3");
+  exports["setBitRate"] = Function::New(env, _setBitRate, "setBitRate");
+  exports["getBitRate"] = Function::New(env, _getBitRate, "getBitRate");
+  // module.exports = { wav2mp3, setBitRate, getBitRate }
+  return exports;
+}
+
+NODE_API_MODULE(NODE_GYP_MODULE_NAME, _index)
