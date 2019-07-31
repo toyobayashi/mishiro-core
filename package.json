@@ -9,6 +9,9 @@
     "test-check": "mocha ./test/check.test.js",
     "test-download": "mocha ./test/download.test.js"
   },
+  "engines": {
+    "node": ">=10.7.0"
+  },
   "keywords": [
     "cgss",
     "deresute",
