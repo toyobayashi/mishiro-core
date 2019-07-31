@@ -1,6 +1,8 @@
 #ifndef __LAME_ASYNC_WORKER_H__
 #define __LAME_ASYNC_WORKER_H__
 
+#define NAPI_EXPERIMENTAL // 10.7.0+ Napi::ThreadSafeFunction
+
 #include <napi.h>
 #include <string>
 

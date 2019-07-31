@@ -6,15 +6,15 @@ $ npm install mishiro-core
 
 ## Require
 
-* Node.js >= 8
+* Node.js >= 10.7.0 || electron >= 4.0.0 (Node.js 10.11.0)
 * Python 2.7
-* [Windows] Visual Studio 2015/2017 C++ build tools and .NET
+* [Windows] Visual Studio 2017/2019 with C++ build tools and .NET
 * [MacOS] Xcode Command Line Tools
 
 ## Usage
 
 ``` javascript
-const { Downloader, Client, audio, util } = require('mishiro-core')
+const { Downloader, Client, audio, util, config } = require('mishiro-core')
 
 let downloader = new Downloader() // download game resources
 
