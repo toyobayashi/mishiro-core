@@ -21,7 +21,7 @@ static void callInJsThread (Napi::Env env, Function jsCallback, EncodeData* valu
   res["total"] = Number::New(env, value->total);
   res["loaded"] = Number::New(env, value->loaded);
   res["percentage"] = Number::New(env, 100 * value->loaded / value->total);
-  jsCallback.Call({ env.Null(), res });
+  jsCallback.Call({ res });
   delete value;
 }
 
@@ -50,16 +50,16 @@ int LameAsyncWorker::getBitRate() {
   return _bitRate;
 }
 
-LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, Function& callback): AsyncWorker(callback) {
+LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, Function& callback, Function& onProgress): AsyncWorker(callback) {
   _wavPath = wavPath;
   _mp3Path = mp3Path;
   if (_progressCallback) {
     _tsfn = new ThreadSafeFunction(ThreadSafeFunction::New(
       Env(),
-      callback,                // JavaScript function called asynchronously
+      onProgress,        // JavaScript function called asynchronously
       "wav2mp3Callback",       // Name
       0,                       // Unlimited queue
-      1/* ,                       // Only one thread will use this initially
+      1/* ,                    // Only one thread will use this initially
       []( Napi::Env ) {        // Finalizer used to clean threads up
         nativeThread.join();
       }  */));
@@ -173,13 +173,13 @@ void LameAsyncWorker::Execute() {
 
 void LameAsyncWorker::OnOK() {
   HandleScope scope(Env());
-  Object res = Object::New(Env());
-  res["finish"] = Boolean::New(Env(), true);
+  // Object res = Object::New(Env());
+  // res["finish"] = Boolean::New(Env(), true);
   // callback(null, { finish: true })
-  Callback().Call({ Env().Null(), res });
+  Callback().Call({ Env().Null() });
 }
 void LameAsyncWorker::OnError(const Napi::Error& err) {
   // callback(err, null)
   HandleScope scope(Env());
-  Callback().Call({ err.Value(), Env().Null() });
+  Callback().Call({ err.Value() });
 }

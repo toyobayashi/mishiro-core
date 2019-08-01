@@ -5,8 +5,8 @@ using namespace Napi;
 static Value _wav2mp3(const CallbackInfo& info) {
   Env env = info.Env();
 
-  if (info.Length() != 3) {
-    Error::New(env, "wav2mp3(): arguments.length !== 3").ThrowAsJavaScriptException();
+  if (info.Length() != 4) {
+    Error::New(env, "wav2mp3(): arguments.length !== 4").ThrowAsJavaScriptException();
     return env.Undefined();
   }
 
@@ -25,8 +25,14 @@ static Value _wav2mp3(const CallbackInfo& info) {
     return env.Undefined();
   }
 
+  if (!info[3].IsFunction()) {
+    Error::New(env, "wav2mp3(): typeof arguments[3] !== 'function'").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
   Function callback = info[2].As<Function>();
-  LameAsyncWorker *w = new LameAsyncWorker(info[0].As<String>().Utf8Value(), info[1].As<String>().Utf8Value(), callback);
+  Function onProgress = info[3].As<Function>();
+  LameAsyncWorker *w = new LameAsyncWorker(info[0].As<String>().Utf8Value(), info[1].As<String>().Utf8Value(), callback, onProgress);
   w->Queue();
 
   return env.Undefined();
