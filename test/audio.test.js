@@ -10,6 +10,7 @@ const audio = cgss.audio
 
 cgss.config.setCallbackInterval(500)
 cgss.config.setBitRate(192)
+cgss.config.setProgressCallback(true)
 console.log(cgss.config.list())
 
 describe('cgss.audio.acb2hca()', () => {
@@ -69,13 +70,14 @@ describe('cgss.audio.wav2mp3()', () => {
     const mp3 = await audio.wav2mp3(
       path.join(__dirname, '../download/_acb_bgm_commu_kawaii.acb', 'bgm_commu_kawaii.wav'),
       null,
-      function (_data) {
+      function (data) {
         callCount++
+        console.log(data)
       }
     )
     assert.ok(path.parse(mp3).base === 'bgm_commu_kawaii.mp3')
     assert.ok(fs.existsSync(mp3))
-    assert.ok(callCount !== 0)
+    assert.ok(cgss.config.getProgressCallback() ? (callCount !== 0) : (callCount === 0))
   })
 })
 

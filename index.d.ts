@@ -98,6 +98,8 @@ declare class Config {
   setCallbackInterval (num: number): void
   getBitRate (): number
   setBitRate (num: number): void
+  getProgressCallback (): boolean
+  setProgressCallback (value: boolean): void
   list (): { [key: string]: any }
 }
 

@@ -55,10 +55,35 @@ static Value _getBitRate(const CallbackInfo& info) {
   return Number::New(env, (double)LameAsyncWorker::getBitRate());
 }
 
+static Value _setProgressCallback(const CallbackInfo& info) {
+  Env env = info.Env();
+
+  if (info.Length() != 1) {
+    Error::New(env, "setProgressCallback(): arguments.length !== 1").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  if (!info[0].IsBoolean()) {
+    Error::New(env, "setProgressCallback(): typeof arguments[0] !== 'boolean'").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  LameAsyncWorker::setProgressCallback(info[0].As<Boolean>().Value());
+  return env.Undefined();
+}
+
+static Value _getProgressCallback(const CallbackInfo& info) {
+  Env env = info.Env();
+
+  return Boolean::New(env, LameAsyncWorker::getProgressCallback());
+}
+
 static Object _index(Env env, Object exports) {
   exports["wav2mp3"] = Function::New(env, _wav2mp3, "wav2mp3");
   exports["setBitRate"] = Function::New(env, _setBitRate, "setBitRate");
   exports["getBitRate"] = Function::New(env, _getBitRate, "getBitRate");
+  exports["setProgressCallback"] = Function::New(env, _setProgressCallback, "setProgressCallback");
+  exports["getProgressCallback"] = Function::New(env, _getProgressCallback, "getProgressCallback");
   // module.exports = { wav2mp3, setBitRate, getBitRate }
   return exports;
 }

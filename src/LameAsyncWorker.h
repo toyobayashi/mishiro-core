@@ -15,11 +15,14 @@ class LameAsyncWorker : public Napi::AsyncWorker {
     void OnError(const Napi::Error&);
     static void setBitRate(int);
     static int getBitRate();
+    static void setProgressCallback(bool);
+    static bool getProgressCallback();
   private:
     std::string _wavPath;
     std::string _mp3Path;
-    Napi::ThreadSafeFunction _tsfn;
+    Napi::ThreadSafeFunction* _tsfn;
     static int _bitRate;
+    static bool _progressCallback;
 };
 
 #endif // ! __LAME_ASYNC_WORKER_H__
