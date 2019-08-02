@@ -263,7 +263,7 @@ inline void ThreadSafeAsyncWorker::EmitProgress(void* data) {
   }
   napi_status status = napi_call_threadsafe_function(_tsfn, data, napi_tsfn_blocking);
   if (status != napi_ok) {
-    SetError("napi_acquire_threadsafe_function() failed.");
+    SetError("napi_call_threadsafe_function() failed.");
   }
 }
 
