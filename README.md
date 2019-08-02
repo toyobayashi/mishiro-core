@@ -9,6 +9,7 @@ $ npm install mishiro-core
 * Node.js >= 10.7.0 || electron >= 4.0.0 (Node.js 10.11.0)
 * Python 2.7
 * [Windows] Visual Studio 2017/2019 with C++ build tools and .NET
+* [Linux] make & gcc & g++
 * [MacOS] Xcode Command Line Tools
 
 ## Usage
@@ -38,6 +39,30 @@ const client = new Client('123456789:987654321:1a3b5c7d-1234-4bcd-9efa-8e6f4a2b7
 client.check().then(resVer => console.log(resVer))
 
 // for more details, see index.d.ts and test.
+```
+
+## Test
+
+``` bash
+# use latest npm (6.10.2+ with node-gyp 5.x)
+# npm 6.9.0 use internal node-gyp whose version is v3
+# it's important to match the globally installed node-gyp version
+# because the location where node-gyp v5 cache the node header
+# is different from node-gyp v3
+$ npm install -g npm
+
+# install node-gyp (5+)
+$ npm install -g node-gyp
+
+# install node C++ header
+$ node-gyp install # --target=<node version>
+
+$ npm install # --no-package-lock
+
+# npm run test-check
+# npm run test-download
+# npm run test-audio
+$ npm test
 ```
 
 ## License
