@@ -5,35 +5,48 @@ using namespace Napi;
 static Value _wav2mp3(const CallbackInfo& info) {
   Env env = info.Env();
 
-  if (info.Length() != 4) {
-    Error::New(env, "wav2mp3(): arguments.length !== 4").ThrowAsJavaScriptException();
+  std::string functionSignature = "wav2mp3(wavPath: string, mp3Path: string, onComplete: (err: Error | null) => void, onProgress?: (progress: { total: number; loaded: number; percentage: number }) => void)";
+
+  if (info.Length() < 3) {
+    TypeError::New(env, functionSignature + ": arguments.length < 3").ThrowAsJavaScriptException();
     return env.Undefined();
   }
 
   if (!info[0].IsString()) {
-    Error::New(env, "wav2mp3(): typeof arguments[0] !== 'string'").ThrowAsJavaScriptException();
+    TypeError::New(env, functionSignature + ": typeof wavPath !== 'string'").ThrowAsJavaScriptException();
     return env.Undefined();
   }
 
   if (!info[1].IsString()) {
-    Error::New(env, "wav2mp3(): typeof arguments[1] !== 'string'").ThrowAsJavaScriptException();
+    TypeError::New(env, functionSignature + ": typeof mp3Path !== 'string'").ThrowAsJavaScriptException();
     return env.Undefined();
   }
 
   if (!info[2].IsFunction()) {
-    Error::New(env, "wav2mp3(): typeof arguments[2] !== 'function'").ThrowAsJavaScriptException();
+    TypeError::New(env, functionSignature + ": typeof onComplete !== 'function'").ThrowAsJavaScriptException();
     return env.Undefined();
   }
 
-  if (!info[3].IsFunction()) {
-    Error::New(env, "wav2mp3(): typeof arguments[3] !== 'function'").ThrowAsJavaScriptException();
-    return env.Undefined();
+  if (info.Length() > 3) {
+    if (!info[3].IsFunction()) {
+      TypeError::New(env, functionSignature + ": typeof onProgress !== 'function'").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+    LameAsyncWorker *w = new LameAsyncWorker(
+      info[0].As<String>().Utf8Value(),
+      info[1].As<String>().Utf8Value(),
+      info[2].As<Function>(),
+      info[3].As<Function>()
+    );
+    w->Queue();
+  } else {
+    LameAsyncWorker *w = new LameAsyncWorker(
+      info[0].As<String>().Utf8Value(),
+      info[1].As<String>().Utf8Value(),
+      info[2].As<Function>()
+    );
+    w->Queue();
   }
-
-  Function callback = info[2].As<Function>();
-  Function onProgress = info[3].As<Function>();
-  LameAsyncWorker *w = new LameAsyncWorker(info[0].As<String>().Utf8Value(), info[1].As<String>().Utf8Value(), callback, onProgress);
-  w->Queue();
 
   return env.Undefined();
 }

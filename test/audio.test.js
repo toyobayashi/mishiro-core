@@ -84,9 +84,14 @@ describe('cgss.audio.wav2mp3()', () => {
 describe('cgss.audio.hca2mp3()', () => {
   it('bgm_commu_ashita.hca', async function () {
     this.timeout(Infinity)
-    const mp3 = await audio.hca2mp3(path.join(__dirname, '../download/_acb_bgm_commu_ashita.acb', 'bgm_commu_ashita.hca'))
+    let callCount = 0
+    const mp3 = await audio.hca2mp3(path.join(__dirname, '../download/_acb_bgm_commu_ashita.acb', 'bgm_commu_ashita.hca'), '', function (data) {
+      callCount++
+      console.log(data)
+    })
     assert.ok(path.parse(mp3).base === 'bgm_commu_ashita.mp3')
     assert.ok(fs.existsSync(mp3))
+    assert.ok(cgss.config.getProgressCallback() ? (callCount !== 0) : (callCount === 0))
   })
 })
 

@@ -14,17 +14,6 @@ typedef struct EncodeData {
   double loaded;
 } EncodeData;
 
-static void callInJsThread (Napi::Env env, Function jsCallback, EncodeData* value) {
-  HandleScope scope(env);
-  Object res = Object::New(env);
-  res["finish"] = Boolean::New(env, false);
-  res["total"] = Number::New(env, value->total);
-  res["loaded"] = Number::New(env, value->loaded);
-  res["percentage"] = Number::New(env, 100 * value->loaded / value->total);
-  jsCallback.Call({ res });
-  delete value;
-}
-
 int LameAsyncWorker::_bitRate = 128;
 bool LameAsyncWorker::_progressCallback = true;
 
@@ -50,30 +39,19 @@ int LameAsyncWorker::getBitRate() {
   return _bitRate;
 }
 
-LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, Function& callback, Function& onProgress): AsyncWorker(callback) {
+LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, Function& callback): ThreadSafeAsyncWorker(callback) {
   _wavPath = wavPath;
   _mp3Path = mp3Path;
-  if (_progressCallback) {
-    _tsfn = new ThreadSafeFunction(ThreadSafeFunction::New(
-      Env(),
-      onProgress,        // JavaScript function called asynchronously
-      "wav2mp3Callback",       // Name
-      0,                       // Unlimited queue
-      1/* ,                    // Only one thread will use this initially
-      []( Napi::Env ) {        // Finalizer used to clean threads up
-        nativeThread.join();
-      }  */));
-  } else {
-    _tsfn = nullptr;
-  }
+  _hasProgressCallback = false;
 }
 
-LameAsyncWorker::~LameAsyncWorker() {
-  if (_tsfn != nullptr) {
-    delete _tsfn;
-    _tsfn = nullptr;
-  }
+LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, Function& callback, Function& onProgress): ThreadSafeAsyncWorker(callback, onProgress) {
+  _wavPath = wavPath;
+  _mp3Path = mp3Path;
+  _hasProgressCallback = true;
 }
+
+LameAsyncWorker::~LameAsyncWorker() {}
 
 void LameAsyncWorker::Execute() {
   unsigned int read;
@@ -144,11 +122,11 @@ void LameAsyncWorker::Execute() {
         write = lame_encode_buffer_interleaved(lame, wavBuffer, read, mp3Buffer, MP3_SIZE);
       }
       
-      if (_tsfn != nullptr) {
+      if (_progressCallback && _hasProgressCallback) {
         EncodeData* data = new EncodeData;
         data->loaded = (double)loaded;
         data->total = (double)wavsize;
-        _tsfn->BlockingCall(data, callInJsThread);
+        EmitProgress(data);
       }
 
     } else {
@@ -157,12 +135,6 @@ void LameAsyncWorker::Execute() {
     fwrite(mp3Buffer, sizeof(unsigned char), write, mp3);
   } while (read != 0);
 
-  if (_tsfn != nullptr) {
-    if (napi_ok != _tsfn->Release()) {
-      SetError("_tsfn->Release() failed.");
-    }
-  }
-  
   delete[] wavBuffer;
   delete[] mp3Buffer;
   // lame_mp3_tags_fid(lame, mp3);
@@ -171,15 +143,25 @@ void LameAsyncWorker::Execute() {
   fclose(wav);
 }
 
+void LameAsyncWorker::OnProgress(void* data) {
+  Napi::Env env = Env();
+  HandleScope scope(env);
+  EncodeData* value = (EncodeData*)data;
+  Object res = Object::New(env);
+  res["total"] = Number::New(env, value->total);
+  res["loaded"] = Number::New(env, value->loaded);
+  res["percentage"] = Number::New(env, 100 * value->loaded / value->total);
+  ProgressCallback().Call({ res });
+  delete value;
+}
+
 void LameAsyncWorker::OnOK() {
   HandleScope scope(Env());
-  // Object res = Object::New(Env());
-  // res["finish"] = Boolean::New(Env(), true);
-  // callback(null, { finish: true })
+  // callback(null)
   Callback().Call({ Env().Null() });
 }
 void LameAsyncWorker::OnError(const Napi::Error& err) {
-  // callback(err, null)
+  // callback(err)
   HandleScope scope(Env());
   Callback().Call({ err.Value() });
 }
