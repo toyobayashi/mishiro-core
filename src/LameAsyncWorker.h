@@ -8,8 +8,8 @@
 
 class LameAsyncWorker : public ThreadSafeAsyncWorker {
   public:
-    LameAsyncWorker(const std::string&, const std::string&, Napi::Function&);
-    LameAsyncWorker(const std::string&, const std::string&, Napi::Function&, Napi::Function&);
+    LameAsyncWorker(const std::string&, const std::string&, const Napi::Function&);
+    LameAsyncWorker(const std::string&, const std::string&, const Napi::Function&, const Napi::Function&);
     ~LameAsyncWorker();
     void Execute();
     void OnProgress(void* data);

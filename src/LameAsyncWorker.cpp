@@ -39,13 +39,13 @@ int LameAsyncWorker::getBitRate() {
   return _bitRate;
 }
 
-LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, Function& callback): ThreadSafeAsyncWorker(callback) {
+LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, const Function& callback): ThreadSafeAsyncWorker(callback) {
   _wavPath = wavPath;
   _mp3Path = mp3Path;
   _hasProgressCallback = false;
 }
 
-LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, Function& callback, Function& onProgress): ThreadSafeAsyncWorker(callback, onProgress) {
+LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, const Function& callback, const Function& onProgress): ThreadSafeAsyncWorker(callback, onProgress) {
   _wavPath = wavPath;
   _mp3Path = mp3Path;
   _hasProgressCallback = true;
