@@ -6,7 +6,7 @@ $ npm install mishiro-core
 
 ## Require
 
-* Node.js >= 10.7.0 || electron >= 4.0.0 (Node.js 10.11.0)
+* Node.js >= 10.8.0 || electron >= 4.0.0 (Node.js 10.11.0)
 * Python 2.7
 * [Windows] Visual Studio 2017/2019 with C++ build tools and .NET
 * [Linux] make & gcc & g++

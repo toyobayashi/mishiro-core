@@ -73,7 +73,7 @@ void LameAsyncWorker::Execute() {
   }
 
   Wav wavstruct;
-  fread(&wavstruct, 1, sizeof(wavstruct), wav);
+  read = fread(&wavstruct, 1, sizeof(wavstruct), wav);
 
   long start = 4 * 1024;
   fseek(wav, 0L, SEEK_END);
@@ -95,8 +95,8 @@ void LameAsyncWorker::Execute() {
     return;
   }
 
-  const int WAV_SIZE = 8192;
-  const int MP3_SIZE = 8192;
+  const int WAV_SIZE = 128 * 1024;
+  const int MP3_SIZE = 128 * 1024;
 
   const int CHANNEL = (int)wavstruct.fmt.NumChannels;
 

@@ -1,6 +1,7 @@
 #ifndef __THREAD_SAFE_ASYNC_WORKER_H__
 #define __THREAD_SAFE_ASYNC_WORKER_H__
 
+#define NAPI_EXPERIMENTAL // 10.7.0+ Napi::ThreadSafeFunction
 #include <napi.h>
 
 class ThreadSafeAsyncWorker {
@@ -70,8 +71,8 @@ private:
   napi_async_work _work;
   napi_threadsafe_function _tsfn;
   // ObjectReference _receiver;
-  Napi::FunctionReference _progressCallback;
   Napi::FunctionReference _callback;
+  Napi::FunctionReference _progressCallback;
   std::string _error;
   bool _suppress_destruct;
 };
@@ -93,7 +94,7 @@ inline ThreadSafeAsyncWorker::~ThreadSafeAsyncWorker() {
 }
 
 inline ThreadSafeAsyncWorker::ThreadSafeAsyncWorker(const Napi::Function& callback)
-  : _env(callback.Env()), _suppress_destruct(false), _callback(Napi::Persistent(callback)), _progressCallback(), _tsfn(nullptr) {
+  : _env(callback.Env()), _tsfn(nullptr), _callback(Napi::Persistent(callback)), _progressCallback(), _suppress_destruct(false) {
   napi_value resource_id;
   napi_status status = napi_create_string_latin1(
       _env, "generic", NAPI_AUTO_LENGTH, &resource_id);
@@ -105,7 +106,7 @@ inline ThreadSafeAsyncWorker::ThreadSafeAsyncWorker(const Napi::Function& callba
 }
 
 inline ThreadSafeAsyncWorker::ThreadSafeAsyncWorker(const Napi::Function& callback, const Napi::Function& progressCallback)
-  : _env(callback.Env()), _suppress_destruct(false), _callback(Napi::Persistent(callback)), _progressCallback(Napi::Persistent(progressCallback)) {
+  : _env(callback.Env()), _callback(Napi::Persistent(callback)), _progressCallback(Napi::Persistent(progressCallback)), _suppress_destruct(false) {
   napi_value resource_id;
   napi_status status = napi_create_string_latin1(
       _env, "generic", NAPI_AUTO_LENGTH, &resource_id);

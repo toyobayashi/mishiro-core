@@ -21,6 +21,9 @@ describe('cgss.audio.acb2hca()', () => {
     })
     console.log()
     assert.ok(acb === path.join(__dirname, '../download', 'card_200087.acb'))
+    if (fs.existsSync(path.join(__dirname, '../download', '_acb_card_200087.acb'))) {
+      fs.removeSync(path.join(__dirname, '../download', '_acb_card_200087.acb'))
+    }
     const l = fs.readdirSync((await audio.acb2hca(acb)).dirname)
     for (let i = 0; i < l.length; i++) {
       assert.ok(path.parse(l[i]).ext === '.hca')
@@ -34,6 +37,9 @@ describe('cgss.audio.acb2hca()', () => {
     })
     console.log()
     assert.ok(acb === path.join(__dirname, '../download', 'bgm_commu_kawaii.acb'))
+    if (fs.existsSync(path.join(__dirname, '../download', '_acb_bgm_commu_kawaii.acb'))) {
+      fs.removeSync(path.join(__dirname, '../download', '_acb_bgm_commu_kawaii.acb'))
+    }
     const l = fs.readdirSync((await audio.acb2hca(acb)).dirname)
     for (let i = 0; i < l.length; i++) {
       assert.ok(path.parse(l[i]).ext === '.hca')
@@ -47,6 +53,9 @@ describe('cgss.audio.acb2hca()', () => {
     })
     console.log()
     assert.ok(acb === path.join(__dirname, '../download', 'bgm_commu_ashita.acb'))
+    if (fs.existsSync(path.join(__dirname, '../download', '_acb_bgm_commu_ashita.acb'))) {
+      fs.removeSync(path.join(__dirname, '../download', '_acb_bgm_commu_ashita.acb'))
+    }
     const l = fs.readdirSync((await audio.acb2hca(acb)).dirname)
     for (let i = 0; i < l.length; i++) {
       assert.ok(path.parse(l[i]).ext === '.hca')
@@ -135,12 +144,15 @@ describe('cgss.audio.acb2mp3()', () => {
     })
     console.log()
     assert.ok(acb === path.join(__dirname, '../download', 'card_100071.acb'))
-    const l = await audio.acb2mp3(acb/* , (c, t, n) => console.log(c, t, n) */)
+    const l = await audio.acb2mp3(acb, (c, t, _n) => {
+      console.log('Completed: ' + c + ' / ' + t)
+    }, (c, t, p) => console.log(c, t, p))
     assert.ok(l.indexOf('') === -1)
     for (let i = 0; i < l.length; i++) {
       assert.ok(path.parse(l[i]).ext === '.mp3')
       assert.ok(fs.existsSync(l[i]))
     }
+    assert.ok(typeof l.dirname === 'string')
   })
 })
 
