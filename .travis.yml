@@ -36,6 +36,8 @@ deploy:
     email: lifenglin314@outlook.com
     api_key:
       secure: ezd2/VjUf3W++NUfIIEsE3BM0+4UpWGG+avjnCHb7hisLS44K65ibtaUR1uC3M6xdxSxccF7HLSLmEFvguyXOHHFsueEW8MYh+qghtGfCBHJKsdAWp+eocQ/epblGiiKfvu6a9GfNPEW8XDN9MIFci9j2IPU7rcUP6vraG8nZPgKBgweXjvmhdLaE2q777RjXYMG7kMPhunNTTimH816tTavy4UUUzQlRUeV84YuNOTSyF4Dihy4d+zDWXe8VnRYK3WGuqaU7OqVxVilbZnurXN+lRNlMZNsfZEV2Z3/ELCBwZ0LeuL1ihAZmwTK8MglYr7qraBfkU1Bh4TM0p0mO67tYwDB2xeNYpD7oHwaEoa86YfxqFXHbH59z+Jcp2XkDOtDkYlHNt/XQ2SmER5wpg6gIRoJnjBW6v4XknN5u211ZhVcM6+sb7VvuzyAoOBUZoduLEzy7RxzIKEUy6bM+zOjOqUuA15el6DmeaSGTPxlSigj1dB0KAGbgfx7ZHr43ri7miOePoG6Zmwbt0Bd9xcMO7o++FQkfJVmksXDiX4fOTrDucy7k5tE71HgfmABlTIA958LEYSAQbMafF5RvJocQhBdfIDyad0/DSyKBlKGweD6zenQtGieWaCnG5GW5UstJwT5cHc0CrDTJ+N8z9j1Qu19k8Z0D0M/9DsWU4g=
+    skip_cleanup: true
     on:
       tags: true
       repo: toyobayashi/mishiro-core
+      condition: $TRAVIS_OS_NAME = linux
