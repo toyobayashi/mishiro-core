@@ -124,9 +124,11 @@ void LameAsyncWorker::Execute() {
       
       if (_progressCallback && _hasProgressCallback) {
         EncodeData* data = new EncodeData;
-        data->loaded = (double)loaded;
-        data->total = (double)wavsize;
-        EmitProgress(data);
+        if (data != nullptr) {
+          data->loaded = (double)loaded;
+          data->total = (double)wavsize;
+          EmitProgress(data);
+        }
       }
 
     } else {
