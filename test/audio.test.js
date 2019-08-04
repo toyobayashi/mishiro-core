@@ -146,7 +146,7 @@ describe('cgss.audio.acb2mp3()', () => {
     assert.ok(acb === path.join(__dirname, '../download', 'card_100071.acb'))
     const l = await audio.acb2mp3(acb, (c, t, _n) => {
       console.log('Completed: ' + c + ' / ' + t)
-    }, (c, t, p) => console.log(c, t, p))
+    }, process.platform === 'win32' ? (c, t, p) => console.log(c, t, p) : null)
     assert.ok(l.indexOf('') === -1)
     for (let i = 0; i < l.length; i++) {
       assert.ok(path.parse(l[i]).ext === '.mp3')
