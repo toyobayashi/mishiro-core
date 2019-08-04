@@ -7,7 +7,8 @@
     "test": "mocha",
     "test-audio": "mocha ./test/audio.test.js",
     "test-check": "mocha ./test/check.test.js",
-    "test-download": "mocha ./test/download.test.js"
+    "test-download": "mocha ./test/download.test.js",
+    "before-deploy": "node ./script/before-deploy.js"
   },
   "engines": {
     "node": ">=10.8.0"
@@ -31,13 +32,13 @@
     "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
+    "fs-extra": "^8.1.0",
     "mocha": "^6.1.4",
     "tslint": "^5.18.0",
     "typescript": "^3.5.3"
   },
   "dependencies": {
     "acb": "^1.2.3",
-    "fs-extra": "^8.1.0",
     "got": "^9.6.0",
     "hca-decoder": "^1.0.2",
     "jimp": "^0.2.28",

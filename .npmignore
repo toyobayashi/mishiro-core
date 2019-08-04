@@ -1,8 +1,10 @@
-download/
-node_modules/
-test/
-script/
-.vscode/
+.vscode
+node_modules
 .eslintrc.json
-build/
-dist/
+.travis.yml
+/download
+/test
+/script
+/build
+/release
+/dist

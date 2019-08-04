@@ -1,7 +1,7 @@
-download/*
-!download/.gitkeep
-node_modules/
-script/
-.vscode/
-build/
-dist/
+.vscode
+node_modules
+/download/*
+!/download/.gitkeep
+/build
+/release
+/dist

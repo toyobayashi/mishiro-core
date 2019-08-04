@@ -1,5 +1,7 @@
 # mishiro-core
 
+[![Build status](https://travis-ci.com/toyobayashi/mishiro-core.svg?branch=master)](https://travis-ci.com/toyobayashi/mishiro-core/)
+
 ``` bash
 $ npm install mishiro-core
 ```

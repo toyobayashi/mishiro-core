@@ -1,0 +1,34 @@
+language: node_js
+node_js:
+  - 12.4.0
+os:
+  - windows
+  - linux
+  - osx
+before_install:
+  - node -v
+  - npm -v
+  - npm install -g node-gyp
+  - node-gyp -v
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then npm config set node_gyp "`npm prefix -g`\\node_modules\\node-gyp\\bin\\node-gyp.js"; else npm config set node_gyp "`npm prefix -g`/lib/node_modules/node-gyp/bin/node-gyp.js"; fi
+  - npm config ls
+install:
+  - npm install
+script:
+  - npm run test-audio
+# branches:
+#   only:
+#     - master
+before_deploy:
+  - npm run before-deploy
+deploy:
+  provider: releases
+  api_key:
+    secure: vaDiYj2Zc0V+jMpUbxj34Gtf8yfC+odVKPoL9qrS6mI9mxqdDxn5K9vVMeSVHNuNSymsF9+J+pcf/Ij/CYeFKhiRC1XE63efd1H1fcnjbQz8KrBLhS7woTFpXZLxw5DEludaH9kyqBI2AWzDsnfZM89XE5vSyE9SvQVIPu9wvlcmvS6CcYLjrqwjWRXaRiOPnwZ/EKJz+EJdlLPLvQWfBJrab2n/dzIsoZCn1AcMwskaPlfLEy0vRcdOTBjE/o4OsDYdsdwzA+XSMt28km2atLQ7xssoOXiFjV/yZPDWUpMiSSyo98SgrTBpGm4htFiaVDpflH+ypH6vxNXJ10BAKsDpjwR1WivCi2HLjdX2NmLnm5v00uC9l3K8aCwEhjVnOBDx+Jr1bQ338NCM9/WO5YsmVkHO3h5Iqbg9wh2qQ+FNG9jWgrm7KpR5KOdJpvdNL4/I9cYZvh8B550XI2OFqZxd6K58mfVZVzHm6iPvs5uHu+JJJy3iei6KqqGAFT2FGLTo9oBFxauunBUBn/wp/in5j2ekeYHWuE8fdouFw+nmQu6eOnkMDOmj4a0O8Mzw80fczCgOOttxqhTguQByEXAnwfQHglwBdW3WFBUklLAZTHzWj6KYPoSK4vTc+PejrRn0PT47Vsqq6+bDb6Uc/EUBJnJz/42xojPdcl21Q2E=
+  file: release/*.node
+  file_glob: true
+  skip_cleanup: true
+  draft: true
+  on:
+    repo: toyobayashi/mishiro-core
+    tags: true
