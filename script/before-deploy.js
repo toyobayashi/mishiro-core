@@ -12,7 +12,7 @@ const platform = process.platform
 const packageVersion = require(getPath('package.json')).version
 
 if (fs.existsSync(getPath('dist/lame.node'))) {
-  fs.mkdirSync(getPath('release'))
+  fs.mkdirsSync(getPath('release'))
   fs.copySync(
     getPath('dist/lame.node'),
     getPath(`release/lame-v${packageVersion}-${platform}-${arch}-${nodeVersion}.node`)
