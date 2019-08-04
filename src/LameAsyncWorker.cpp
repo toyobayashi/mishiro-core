@@ -39,19 +39,29 @@ int LameAsyncWorker::getBitRate() {
   return _bitRate;
 }
 
-LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, const Function& callback): ThreadSafeAsyncWorker(callback) {
+LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, const Function& callback): AsyncWorker(callback) {
   _wavPath = wavPath;
   _mp3Path = mp3Path;
-  _hasProgressCallback = false;
+  _tsfn = nullptr;
 }
 
-LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, const Function& callback, const Function& onProgress): ThreadSafeAsyncWorker(callback, onProgress) {
+LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, const Function& callback, const Function& onProgress): AsyncWorker(callback) {
   _wavPath = wavPath;
   _mp3Path = mp3Path;
-  _hasProgressCallback = true;
+  _tsfn = new ThreadSafeFunction(ThreadSafeFunction::New(
+    Env(),
+    onProgress,
+    "generic",
+    0,
+    1
+  ));
 }
 
-LameAsyncWorker::~LameAsyncWorker() {}
+LameAsyncWorker::~LameAsyncWorker() {
+  if (_tsfn) {
+    delete _tsfn;
+  }
+}
 
 void LameAsyncWorker::Execute() {
   unsigned int read;
@@ -122,12 +132,12 @@ void LameAsyncWorker::Execute() {
         write = lame_encode_buffer_interleaved(lame, wavBuffer, read, mp3Buffer, MP3_SIZE);
       }
       
-      if (_progressCallback && _hasProgressCallback) {
+      if (_progressCallback && _tsfn) {
         EncodeData* data = new EncodeData;
         if (data != nullptr) {
           data->loaded = (double)loaded;
           data->total = (double)wavsize;
-          EmitProgress(data);
+          _tsfn->BlockingCall(data, _CallJS);
         }
       }
 
@@ -143,17 +153,20 @@ void LameAsyncWorker::Execute() {
   lame_close(lame);
   fclose(mp3);
   fclose(wav);
+  if (_tsfn) {
+    _tsfn->Release();
+    _tsfn = nullptr;
+  }
 }
 
-void LameAsyncWorker::OnProgress(void* data) {
-  Napi::Env env = Env();
+void LameAsyncWorker::_CallJS(Napi::Env env, Napi::Function jsCallback, void* data) {
   HandleScope scope(env);
   EncodeData* value = (EncodeData*)data;
   Object res = Object::New(env);
   res["total"] = Number::New(env, value->total);
   res["loaded"] = Number::New(env, value->loaded);
   res["percentage"] = Number::New(env, 100 * value->loaded / value->total);
-  ProgressCallback().Call({ res });
+  jsCallback.Call({ res });
   delete value;
 }
 
