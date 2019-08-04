@@ -22,13 +22,20 @@ script:
 before_deploy:
   - npm run before-deploy
 deploy:
-  provider: releases
-  api_key:
-    secure: vaDiYj2Zc0V+jMpUbxj34Gtf8yfC+odVKPoL9qrS6mI9mxqdDxn5K9vVMeSVHNuNSymsF9+J+pcf/Ij/CYeFKhiRC1XE63efd1H1fcnjbQz8KrBLhS7woTFpXZLxw5DEludaH9kyqBI2AWzDsnfZM89XE5vSyE9SvQVIPu9wvlcmvS6CcYLjrqwjWRXaRiOPnwZ/EKJz+EJdlLPLvQWfBJrab2n/dzIsoZCn1AcMwskaPlfLEy0vRcdOTBjE/o4OsDYdsdwzA+XSMt28km2atLQ7xssoOXiFjV/yZPDWUpMiSSyo98SgrTBpGm4htFiaVDpflH+ypH6vxNXJ10BAKsDpjwR1WivCi2HLjdX2NmLnm5v00uC9l3K8aCwEhjVnOBDx+Jr1bQ338NCM9/WO5YsmVkHO3h5Iqbg9wh2qQ+FNG9jWgrm7KpR5KOdJpvdNL4/I9cYZvh8B550XI2OFqZxd6K58mfVZVzHm6iPvs5uHu+JJJy3iei6KqqGAFT2FGLTo9oBFxauunBUBn/wp/in5j2ekeYHWuE8fdouFw+nmQu6eOnkMDOmj4a0O8Mzw80fczCgOOttxqhTguQByEXAnwfQHglwBdW3WFBUklLAZTHzWj6KYPoSK4vTc+PejrRn0PT47Vsqq6+bDb6Uc/EUBJnJz/42xojPdcl21Q2E=
-  file: release/*.node
-  file_glob: true
-  skip_cleanup: true
-  draft: true
-  on:
-    repo: toyobayashi/mishiro-core
-    tags: true
+  - provider: releases
+    api_key:
+      secure: vaDiYj2Zc0V+jMpUbxj34Gtf8yfC+odVKPoL9qrS6mI9mxqdDxn5K9vVMeSVHNuNSymsF9+J+pcf/Ij/CYeFKhiRC1XE63efd1H1fcnjbQz8KrBLhS7woTFpXZLxw5DEludaH9kyqBI2AWzDsnfZM89XE5vSyE9SvQVIPu9wvlcmvS6CcYLjrqwjWRXaRiOPnwZ/EKJz+EJdlLPLvQWfBJrab2n/dzIsoZCn1AcMwskaPlfLEy0vRcdOTBjE/o4OsDYdsdwzA+XSMt28km2atLQ7xssoOXiFjV/yZPDWUpMiSSyo98SgrTBpGm4htFiaVDpflH+ypH6vxNXJ10BAKsDpjwR1WivCi2HLjdX2NmLnm5v00uC9l3K8aCwEhjVnOBDx+Jr1bQ338NCM9/WO5YsmVkHO3h5Iqbg9wh2qQ+FNG9jWgrm7KpR5KOdJpvdNL4/I9cYZvh8B550XI2OFqZxd6K58mfVZVzHm6iPvs5uHu+JJJy3iei6KqqGAFT2FGLTo9oBFxauunBUBn/wp/in5j2ekeYHWuE8fdouFw+nmQu6eOnkMDOmj4a0O8Mzw80fczCgOOttxqhTguQByEXAnwfQHglwBdW3WFBUklLAZTHzWj6KYPoSK4vTc+PejrRn0PT47Vsqq6+bDb6Uc/EUBJnJz/42xojPdcl21Q2E=
+    file: release/*.node
+    file_glob: true
+    skip_cleanup: true
+    draft: true
+    on:
+      repo: toyobayashi/mishiro-core
+      tags: true
+  - provider: npm
+    email: lifenglin314@outlook.com
+    api_key:
+      secure: ezd2/VjUf3W++NUfIIEsE3BM0+4UpWGG+avjnCHb7hisLS44K65ibtaUR1uC3M6xdxSxccF7HLSLmEFvguyXOHHFsueEW8MYh+qghtGfCBHJKsdAWp+eocQ/epblGiiKfvu6a9GfNPEW8XDN9MIFci9j2IPU7rcUP6vraG8nZPgKBgweXjvmhdLaE2q777RjXYMG7kMPhunNTTimH816tTavy4UUUzQlRUeV84YuNOTSyF4Dihy4d+zDWXe8VnRYK3WGuqaU7OqVxVilbZnurXN+lRNlMZNsfZEV2Z3/ELCBwZ0LeuL1ihAZmwTK8MglYr7qraBfkU1Bh4TM0p0mO67tYwDB2xeNYpD7oHwaEoa86YfxqFXHbH59z+Jcp2XkDOtDkYlHNt/XQ2SmER5wpg6gIRoJnjBW6v4XknN5u211ZhVcM6+sb7VvuzyAoOBUZoduLEzy7RxzIKEUy6bM+zOjOqUuA15el6DmeaSGTPxlSigj1dB0KAGbgfx7ZHr43ri7miOePoG6Zmwbt0Bd9xcMO7o++FQkfJVmksXDiX4fOTrDucy7k5tE71HgfmABlTIA958LEYSAQbMafF5RvJocQhBdfIDyad0/DSyKBlKGweD6zenQtGieWaCnG5GW5UstJwT5cHc0CrDTJ+N8z9j1Qu19k8Z0D0M/9DsWU4g=
+    on:
+      tags: true
+      repo: toyobayashi/mishiro-core
