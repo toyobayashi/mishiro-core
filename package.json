@@ -1,6 +1,6 @@
 {
   "name": "mishiro-core",
-  "version": "4.1.6",
+  "version": "4.1.7",
   "description": "CGSS JavaScript library in Node.js",
   "main": "index.js",
   "scripts": {
@@ -38,7 +38,7 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "acb": "^1.2.4",
+    "acb": "^1.2.5",
     "got": "^9.6.0",
     "hca-decoder": "^1.1.1",
     "jimp": "^0.2.28",
