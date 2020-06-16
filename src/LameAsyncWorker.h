@@ -3,18 +3,21 @@
 
 #define NAPI_EXPERIMENTAL // 10.7.0+ Napi::ThreadSafeFunction
 #include <napi.h>
-// #include "ThreadSafeAsyncWorker.h"
 #include <string>
 
-class LameAsyncWorker : public Napi::AsyncWorker {
+typedef struct EncodeData {
+  double total;
+  double loaded;
+} EncodeData;
+
+class LameAsyncWorker : public Napi::AsyncProgressQueueWorker<EncodeData> {
   public:
     LameAsyncWorker(const std::string&, const std::string&, const Napi::Function&);
     LameAsyncWorker(const std::string&, const std::string&, const Napi::Function&, const Napi::Function&);
-    ~LameAsyncWorker();
-    void Execute();
-    // void OnProgress(void* data);
+    void Execute(const ExecutionProgress& progress);
     void OnOK();
     void OnError(const Napi::Error&);
+    void OnProgress(const EncodeData* data, size_t count);
     static void setBitRate(int);
     static int getBitRate();
     static void setProgressCallback(bool);
@@ -22,10 +25,9 @@ class LameAsyncWorker : public Napi::AsyncWorker {
   private:
     std::string _wavPath;
     std::string _mp3Path;
+    Napi::FunctionReference onProgress;
     static int _bitRate;
     static bool _progressCallback;
-    Napi::ThreadSafeFunction* _tsfn;
-    static void _CallJS(Napi::Env env, Napi::Function jsCallback, void* data);
     // bool _hasProgressCallback;
 };
 
