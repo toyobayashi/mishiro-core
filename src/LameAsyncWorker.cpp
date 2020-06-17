@@ -9,11 +9,6 @@
 
 using namespace Napi;
 
-typedef struct EncodeData {
-  double total;
-  double loaded;
-} EncodeData;
-
 int LameAsyncWorker::_bitRate = 128;
 bool LameAsyncWorker::_progressCallback = true;
 
@@ -39,31 +34,18 @@ int LameAsyncWorker::getBitRate() {
   return _bitRate;
 }
 
-LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, const Function& callback): AsyncWorker(callback) {
+LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, const Function& callback): AsyncProgressQueueWorker(callback) {
   _wavPath = wavPath;
   _mp3Path = mp3Path;
-  _tsfn = nullptr;
 }
 
-LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, const Function& callback, const Function& onProgress): AsyncWorker(callback) {
+LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, const Function& callback, const Function& onProgress): AsyncProgressQueueWorker(callback) {
   _wavPath = wavPath;
   _mp3Path = mp3Path;
-  _tsfn = new ThreadSafeFunction(ThreadSafeFunction::New(
-    Env(),
-    onProgress,
-    "generic",
-    0,
-    1
-  ));
+  this->onProgress = Napi::Weak(onProgress);
 }
 
-LameAsyncWorker::~LameAsyncWorker() {
-  if (_tsfn) {
-    delete _tsfn;
-  }
-}
-
-void LameAsyncWorker::Execute() {
+void LameAsyncWorker::Execute(const ExecutionProgress& progress) {
   unsigned int read;
   unsigned int write;
 
@@ -132,12 +114,13 @@ void LameAsyncWorker::Execute() {
         write = lame_encode_buffer_interleaved(lame, wavBuffer, read, mp3Buffer, MP3_SIZE);
       }
       
-      if (_progressCallback && _tsfn) {
+      if (_progressCallback && !this->onProgress.IsEmpty()) {
         EncodeData* data = new EncodeData;
         if (data != nullptr) {
           data->loaded = (double)loaded;
           data->total = (double)wavsize;
-          _tsfn->BlockingCall(data, _CallJS);
+          progress.Send(data, 1);
+          delete data;
         }
       }
 
@@ -153,21 +136,17 @@ void LameAsyncWorker::Execute() {
   lame_close(lame);
   fclose(mp3);
   fclose(wav);
-  if (_tsfn) {
-    _tsfn->Release();
-    _tsfn = nullptr;
-  }
 }
 
-void LameAsyncWorker::_CallJS(Napi::Env env, Napi::Function jsCallback, void* data) {
+void LameAsyncWorker::OnProgress(const EncodeData* data, size_t /* count */) {
+  Napi::Env env = Env();
   HandleScope scope(env);
-  EncodeData* value = (EncodeData*)data;
+  const EncodeData* value = data;
   Object res = Object::New(env);
   res["total"] = Number::New(env, value->total);
   res["loaded"] = Number::New(env, value->loaded);
   res["percentage"] = Number::New(env, 100 * value->loaded / value->total);
-  jsCallback.Call({ res });
-  delete value;
+  this->onProgress.Call({ res });
 }
 
 void LameAsyncWorker::OnOK() {
