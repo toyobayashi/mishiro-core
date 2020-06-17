@@ -115,13 +115,10 @@ void LameAsyncWorker::Execute(const ExecutionProgress& progress) {
       }
       
       if (_progressCallback && !this->onProgress.IsEmpty()) {
-        EncodeData* data = new EncodeData;
-        if (data != nullptr) {
-          data->loaded = (double)loaded;
-          data->total = (double)wavsize;
-          progress.Send(data, 1);
-          delete data;
-        }
+        EncodeData data;
+        data.loaded = (double)loaded;
+        data.total = (double)wavsize;
+        progress.Send(&data, 1);
       }
 
     } else {
