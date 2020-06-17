@@ -38,11 +38,11 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "acb": "^1.2.5",
-    "got": "^9.6.0",
-    "hca-decoder": "^1.1.1",
-    "jimp": "^0.2.28",
-    "msgpack-lite": "^0.1.26",
-    "node-addon-api": "^3.0.0"
+    "acb": "1.2.5",
+    "got": "9.6.0",
+    "hca-decoder": "1.1.1",
+    "jimp": "0.2.28",
+    "msgpack-lite": "0.1.26",
+    "node-addon-api": "3.0.0"
   }
 }
