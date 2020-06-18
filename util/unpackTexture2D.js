@@ -667,15 +667,6 @@ function convertTexture2D (texture, data) {
   return img
 }
 
-function writeImg (img, filename) {
-  return new Promise((resolve, reject) => {
-    img.write(filename, (err, image) => {
-      if (err) return reject(err)
-      resolve(filename)
-    })
-  })
-}
-
 function unpackTexture2D (assetBundle, targetDir = dirname(assetBundle)) {
   try {
     let asset = new Asset(fs.readFileSync(assetBundle))
@@ -693,8 +684,9 @@ function unpackTexture2D (assetBundle, targetDir = dirname(assetBundle)) {
 
       let img = convertTexture2D(obj, data)
       img.flip(false, true)
+      img.colorType(6)
       let filename = obj.m_Name + '.' + img.getExtension()
-      promisearr.push(writeImg(img, join(targetDir, filename)))
+      promisearr.push(img.writeAsync(join(targetDir, filename)))
     }
     return Promise.all(promisearr)
   } catch (err) {
