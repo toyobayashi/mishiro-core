@@ -23,6 +23,9 @@
     "type": "git",
     "url": "git+https://github.com/toyobayashi/mishiro-core.git"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "MIT",
   "devDependencies": {
     "@types/got": "^9.6.0",
