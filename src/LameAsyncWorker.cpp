@@ -42,7 +42,7 @@ LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& 
 LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, const Function& callback, const Function& onProgress): AsyncProgressQueueWorker(callback) {
   _wavPath = wavPath;
   _mp3Path = mp3Path;
-  this->onProgress = Napi::Weak(onProgress);
+  this->onProgress = Napi::Persistent(onProgress);
 }
 
 void LameAsyncWorker::Execute(const ExecutionProgress& progress) {
@@ -138,13 +138,12 @@ void LameAsyncWorker::Execute(const ExecutionProgress& progress) {
 void LameAsyncWorker::OnProgress(const EncodeData* data, size_t /* count */) {
   Napi::Env env = Env();
   HandleScope scope(env);
-  EncodeData* value = new EncodeData(*data);
   Object res = Object::New(env);
-  res["total"] = Number::New(env, value->total);
-  res["loaded"] = Number::New(env, value->loaded);
-  res["percentage"] = Number::New(env, 100 * value->loaded / value->total);
+  const EncodeData& value = data[0];
+  res["total"] = Number::New(env, value.total);
+  res["loaded"] = Number::New(env, value.loaded);
+  res["percentage"] = Number::New(env, 100 * value.loaded / value.total);
   this->onProgress.Call({ res });
-  delete value;
 }
 
 void LameAsyncWorker::OnOK() {
