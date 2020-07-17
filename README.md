@@ -1,6 +1,7 @@
 # mishiro-core
 
-[![Build status](https://travis-ci.com/toyobayashi/mishiro-core.svg?branch=master)](https://travis-ci.com/toyobayashi/mishiro-core/)
+<!-- [![Build status](https://travis-ci.com/toyobayashi/mishiro-core.svg?branch=master)](https://travis-ci.com/toyobayashi/mishiro-core/) -->
+[![Build](https://github.com/toyobayashi/mishiro-core/workflows/Build/badge.svg)](https://github.com/toyobayashi/mishiro-core/actions?query=workflow%3ABuild)
 
 ``` bash
 $ npm install mishiro-core
