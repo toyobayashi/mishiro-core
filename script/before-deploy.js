@@ -15,6 +15,6 @@ if (fs.existsSync(getPath('dist/lame.node'))) {
   fs.mkdirsSync(getPath('release'))
   fs.copySync(
     getPath('dist/lame.node'),
-    getPath(`release/lame-${process.env.TRAVIS_TAG}-${platform}-${arch}-${nodeVersion}.node`)
+    getPath(`release/lame-${path.basename(process.env.MISHIRO_CORE_FEF)}-${platform}-${arch}-${nodeVersion}.node`)
   )
 }

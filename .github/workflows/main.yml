@@ -44,6 +44,8 @@ jobs:
     - name: Before Deploy
       if: ${{ startsWith(github.event.ref, 'refs/tags') }}
       run: npm run before-deploy
+      env:
+        MISHIRO_CORE_FEF: {{ github.event.ref }}
 
     - name: Publish
       if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.os == 'ubuntu-latest' }}

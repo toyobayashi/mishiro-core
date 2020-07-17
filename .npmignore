@@ -1,10 +1,11 @@
 .vscode
 node_modules
 .eslintrc.json
-.travis.yml
+.travis*
 /download
 /test
 /script
 /build
 /release
 /dist
+.github
