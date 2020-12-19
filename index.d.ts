@@ -64,7 +64,8 @@ export declare class Client {
 export declare enum ResourceType {
   ASSET = 0,
   SOUND = 1,
-  DATABASE = 2
+  DATABASE = 2,
+  MOVIE = 3
 }
 
 export declare class Downloader {
@@ -78,7 +79,7 @@ export declare class Downloader {
   electronNet: boolean
   useElectronNet (value: boolean): void
   downloadOne (u: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
-  downloadOneRaw (type: ResourceType, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+  downloadOneRaw (type: ResourceType, hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
 
   download (tasks: any[][], start?: (task: any[]) => void, onData?: (prog: ProgressInfo) => void, complete?: (task: any[]) => void, stop?: (task: any[]) => void): Promise<string[]>
   batchDownload (manifests: { name: string; hash: string; [x: string]: any }[], targetDir: string, start?: (task: { name: string; hash: string; [x: string]: any }, filepath: string) => void, onData?: (prog: ProgressInfo) => void, complete?: (task: { name: string; hash: string; [x: string]: any }, filepath: string) => void, stop?: (task: { name: string; hash: string; [x: string]: any }, filepath: string) => void): Promise<string[]>
@@ -87,6 +88,7 @@ export declare class Downloader {
   downloadManifest (resVer: number | string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
   downloadAsset (hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
   downloadSound (k: string, hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+  downloadMovie (hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
   downloadDatabase (hash: string, p: string, onData?: (prog: ProgressInfo) => void, suffix?: string): Promise<string>
   downloadSpread (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
   downloadIcon (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
