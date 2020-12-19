@@ -1,6 +1,6 @@
 import * as http from 'http'
 
-export interface RequestOption {
+export declare interface RequestOption {
   url: string
   method?: string
   timeout?: number
@@ -10,14 +10,14 @@ export interface RequestOption {
   onData?: (prog: ProgressInfo) => void
 }
 
-export interface ProgressInfo {
+export declare interface ProgressInfo {
   name?: string
   current: number
   max: number
   loading: number
 }
 
-export interface ServerResponse {
+export declare interface ServerResponse {
   data_headers: {
     required_res_ver?: string
     store_url?: string
@@ -35,7 +35,7 @@ export interface ServerResponse {
   }
 }
 
-export class Client {
+export declare class Client {
   constructor (account: string, resVer?: string)
   user: string
   viewer: string
@@ -61,7 +61,15 @@ export class Client {
   static decryptBody (body: string, iv: Buffer): any
 }
 
-export class Downloader {
+export declare enum ResourceType {
+  ASSET = 0,
+  SOUND = 1,
+  DATABASE = 2
+}
+
+export declare class Downloader {
+  static RES_HOST_BASE: string
+  static IMG_HOST_BASE: string
   tasks: any[][] | { name: string; hash: string; [x: string]: any }[]
   index: number
   req: http.ClientRequest | null
@@ -70,6 +78,7 @@ export class Downloader {
   electronNet: boolean
   useElectronNet (value: boolean): void
   downloadOne (u: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+  downloadOneRaw (type: ResourceType, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
 
   download (tasks: any[][], start?: (task: any[]) => void, onData?: (prog: ProgressInfo) => void, complete?: (task: any[]) => void, stop?: (task: any[]) => void): Promise<string[]>
   batchDownload (manifests: { name: string; hash: string; [x: string]: any }[], targetDir: string, start?: (task: { name: string; hash: string; [x: string]: any }, filepath: string) => void, onData?: (prog: ProgressInfo) => void, complete?: (task: { name: string; hash: string; [x: string]: any }, filepath: string) => void, stop?: (task: { name: string; hash: string; [x: string]: any }, filepath: string) => void): Promise<string[]>
@@ -83,7 +92,7 @@ export class Downloader {
   downloadIcon (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
 }
 
-declare class FileReader {
+declare declare class FileReader {
   constructor (buf: Buffer)
   readUInt8 (): number
   readUInt16LE (): number
@@ -93,7 +102,7 @@ declare class FileReader {
   tell (): number
 }
 
-declare class Config {
+declare declare class Config {
   getCallbackInterval (): number
   setCallbackInterval (num: number): void
   getBitRate (): number
@@ -103,7 +112,7 @@ declare class Config {
   list (): { [key: string]: any }
 }
 
-export namespace util {
+export declare namespace util {
   export class Lz4 {
     constructor (buf: Buffer)
     reader: FileReader
@@ -117,7 +126,7 @@ export namespace util {
 
 declare type AcbResult = string[] & { dirname: string }
 
-export namespace audio {
+export declare namespace audio {
   export function acb2hca (acb: string, targetDir?: string): Promise<AcbResult>
   export function hca2wav (hca: string): Promise<string>
   export function wav2mp3 (wav: string, mp3?: string, onProgress?: (data: ProgressInfo) => void): Promise<string>
@@ -126,4 +135,4 @@ export namespace audio {
   export function acb2mp3 (acb: string, singleComplete?: (completed: number, total: number, filename: string) => void, onWav2Mp3Progress?: (current: number, total: number, prog: ProgressInfo) => void): Promise<AcbResult>
 }
 
-export const config: Config
+export declare const config: Config
