@@ -17,15 +17,6 @@ describe('cgss.downloader', () => {
     assert.ok(fs.existsSync(manifest))
   })
 
-  // it('cgss.downloader.downloadDatabase()', async function () {
-  //   this.timeout(Infinity)
-  //   const f = await dler.downloadDatabase('cf54947bce776e2426b5f6c25f1c1210', path.join(__dirname, '../download', 'master'), (prog) => {
-  //     progress(prog.name, prog.current, prog.max, prog.loading)
-  //   }, 'mdb')
-  //   assert.ok(f === path.join(__dirname, '../download', 'master.mdb'))
-  //   assert.ok(fs.existsSync(f))
-  // })
-
   it('cgss.downloader.downloadDatabase()', async function () {
     this.timeout(Infinity)
     const f = await dler.downloadDatabase('e087363817ffa9784d78adf04c755342', path.join(__dirname, '../download', 'musicscores_m075'), (prog) => {

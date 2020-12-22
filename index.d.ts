@@ -42,8 +42,6 @@ export declare class Client {
   udid: string
   sid: string
   resVer: string
-  electronNet: boolean
-  useElectronNet (value: boolean): void
   post (path: string, args: any, headerEx?: { [x: string]: string }): Promise<ServerResponse>
   check (): Promise<number>
   getProfile (viewer: string | number): Promise<ServerResponse>
@@ -76,14 +74,13 @@ export declare class Downloader {
   req: http.ClientRequest | null
   isContinue: boolean
   rename: boolean
-  electronNet: boolean
-  useElectronNet (value: boolean): void
   downloadOne (u: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
   downloadOneRaw (type: ResourceType, hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
 
   download (tasks: any[][], start?: (task: any[]) => void, onData?: (prog: ProgressInfo) => void, complete?: (task: any[]) => void, stop?: (task: any[]) => void): Promise<string[]>
   batchDownload (manifests: { name: string; hash: string; [x: string]: any }[], targetDir: string, start?: (task: { name: string; hash: string; [x: string]: any }, filepath: string) => void, onData?: (prog: ProgressInfo) => void, complete?: (task: { name: string; hash: string; [x: string]: any }, filepath: string) => void, stop?: (task: { name: string; hash: string; [x: string]: any }, filepath: string) => void): Promise<string[]>
   stop (stopCallback?: () => void): void
+  stopCurrent (): void
 
   downloadManifest (resVer: number | string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
   downloadAsset (hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
