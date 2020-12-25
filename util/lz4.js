@@ -5,25 +5,31 @@ class FileReader {
     this.buf = buf
     this.curPos = 0
   }
+
   readUInt8 () {
     this.curPos++
     return this.buf.readUInt8(this.curPos - 1)
   }
+
   readUInt16LE () {
     this.curPos += 2
     return this.buf.readUInt16LE(this.curPos - 2)
   }
+
   readUInt32LE () {
     this.curPos += 4
     return this.buf.readUInt32LE(this.curPos - 4)
   }
+
   copy (target, targetStart, thisSize) {
     this.buf.copy(target, targetStart, this.curPos, this.curPos + thisSize)
     this.curPos += thisSize
   }
+
   seek (pos) {
     this.curPos = pos
   }
+
   tell () {
     return this.curPos
   }
@@ -33,9 +39,9 @@ class Lz4 {
   constructor (buf) {
     this.reader = new FileReader(buf)
   }
+
   decompress () {
-    let r = this.reader
-    let retArray
+    const r = this.reader
     let dataSize = 0
     let decompressedSize = 0
 
@@ -51,7 +57,16 @@ class Lz4 {
     decompressedSize = r.readUInt32LE()
     dataSize = r.readUInt32LE()
     endPos = dataSize + 16
-    retArray = Buffer.alloc(decompressedSize)
+
+    const compressed = r.readUInt8()
+    if (!compressed) { // ?
+      const ret = Buffer.alloc(dataSize)
+      r.seek(16)
+      r.copy(ret, 0, dataSize)
+      return ret
+    }
+
+    const retArray = Buffer.alloc(decompressedSize)
 
     r.seek(16)
 
@@ -77,7 +92,7 @@ class Lz4 {
 
       // copy the match properly
       if (matchSize > offset) {
-        let matchPos = retCurPos - offset
+        const matchPos = retCurPos - offset
         while (1) {
           retArray.copy(retArray, retCurPos, matchPos, matchPos + offset)
           retCurPos += offset
@@ -93,7 +108,7 @@ class Lz4 {
   }
 
   readAdditionalSize (reader) {
-    let size = reader.readUInt8()
+    const size = reader.readUInt8()
     if (size === 255) return size + this.readAdditionalSize(reader)
     else return size
   }
@@ -103,7 +118,7 @@ class Lz4 {
       return (new Lz4(input)).decompress()
     }
 
-    let dec = new Lz4(fs.readFileSync(input))
+    const dec = new Lz4(fs.readFileSync(input))
     fs.writeFileSync(input + output, dec.decompress())
     return input + output
   }
