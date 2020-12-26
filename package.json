@@ -42,9 +42,9 @@
   "dependencies": {
     "acb": "1.2.5",
     "got": "11.8.1",
-    "hca-decoder": "1.1.1",
+    "hca-decoder": "1.1.2",
     "jimp": "0.13.0",
     "msgpack-lite": "0.1.26",
-    "node-addon-api": "3.0.1"
+    "node-addon-api": "3.1.0"
   }
 }

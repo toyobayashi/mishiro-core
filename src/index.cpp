@@ -1,4 +1,5 @@
 #include "./LameAsyncWorker.h"
+#include "lz4dec.h"
 
 using namespace Napi;
 
@@ -97,13 +98,49 @@ static Value _getProgressCallback(const CallbackInfo& info) {
   return Boolean::New(env, LameAsyncWorker::getProgressCallback());
 }
 
+static Value _lz4dec(const CallbackInfo& info) {
+  Env env = info.Env();
+
+  if (info.Length() != 1) {
+    Error::New(env, "lz4dec(buf): arguments.length !== 1").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  if (!info[0].IsBuffer()) {
+    Error::New(env, "lz4dec(): Buffer.isBuffer(arguments[0]) === false").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  Buffer<uint8_t> buffer = info[0].As<Buffer<uint8_t>>();
+  const uint8_t* buf = buffer.Data();
+  size_t buflen = buffer.Length();
+  uint32_t uncompressed_size = lz4_get_uncompressed_size(buf, buflen);
+  if (uncompressed_size == 0) {
+    Error::New(env, "lz4dec(): lz4_get_uncompressed_size failed").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  uint8_t* uncompressed_data = new uint8_t[uncompressed_size];
+  const int decompressed_size = lz4_dec_buffer(buf, buflen, uncompressed_data, uncompressed_size);
+  if (decompressed_size <= 0) {
+    delete[] uncompressed_data;
+    Error::New(env, "lz4dec(): lz4_dec_buffer failed").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  Buffer<uint8_t> ret = Buffer<uint8_t>::New(env, uncompressed_data, decompressed_size, [](Env env, uint8_t* data) {
+    delete[] data;
+  });
+  return ret;
+}
+
 static Object _index(Env env, Object exports) {
   exports["wav2mp3"] = Function::New(env, _wav2mp3, "wav2mp3");
   exports["setBitRate"] = Function::New(env, _setBitRate, "setBitRate");
   exports["getBitRate"] = Function::New(env, _getBitRate, "getBitRate");
   exports["setProgressCallback"] = Function::New(env, _setProgressCallback, "setProgressCallback");
   exports["getProgressCallback"] = Function::New(env, _getProgressCallback, "getProgressCallback");
-  // module.exports = { wav2mp3, setBitRate, getBitRate }
+  exports["lz4dec"] = Function::New(env, _lz4dec, "lz4dec");
   return exports;
 }
 

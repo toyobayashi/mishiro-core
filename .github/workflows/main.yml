@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
       with:
-        node-version: '12.8.1'
+        node-version: '12.18.3'
         registry-url: 'https://registry.npmjs.org'
 
     - name: Windows build
@@ -50,6 +50,7 @@ jobs:
       run: |
         node ./script/before-publish.js
         npm publish
+        rm -rf ./.npmrc
       env:
         # NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         NPMTOKEN: ${{ secrets.NPM_TOKEN }}

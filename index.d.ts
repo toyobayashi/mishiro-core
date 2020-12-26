@@ -113,10 +113,6 @@ declare declare class Config {
 
 export declare namespace util {
   export class Lz4 {
-    constructor (buf: Buffer)
-    reader: FileReader
-    decompress (): Buffer
-    readAdditionalSize (): number
     static decompress (input: Buffer): Buffer
     static decompress (input: string, output?: string): string
   }
