@@ -74,6 +74,10 @@ export declare class Downloader {
   req: http.ClientRequest | null
   isContinue: boolean
   rename: boolean
+  autoDecLz4: boolean
+
+  setAutoDecLz4 (v: boolean): void
+  getAutoDecLz4 (): boolean
   downloadOne (u: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
   downloadOneRaw (type: ResourceType, hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
 
