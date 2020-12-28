@@ -134,4 +134,8 @@ export declare namespace audio {
   export function acb2mp3 (acb: string, singleComplete?: (completed: number, total: number, filename: string) => void, onWav2Mp3Progress?: (current: number, total: number, prog: ProgressInfo) => void): Promise<AcbResult>
 }
 
+export declare namespace movie {
+  export function demuxAsync (usmFile: string, outdir?: string): Promise<string>
+}
+
 export declare const config: Config

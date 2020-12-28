@@ -1,9 +1,10 @@
 {
   "name": "mishiro-core",
-  "version": "4.7.0",
+  "version": "4.8.0",
   "description": "CGSS JavaScript library in Node.js",
   "main": "index.js",
   "scripts": {
+    "build": "node-gyp rebuild",
     "test": "mocha",
     "test-audio": "mocha ./test/audio.test.js",
     "test-check": "mocha ./test/check.test.js",
@@ -42,8 +43,9 @@
   "dependencies": {
     "acb": "1.2.5",
     "got": "11.8.1",
-    "hca-decoder": "1.1.2",
-    "jimp": "0.13.0",
+    "hca-decoder": "1.2.0",
+    "usm-decrypter": "1.1.0",
+    "jimp": "0.16.1",
     "msgpack-lite": "0.1.26",
     "node-addon-api": "3.1.0"
   }

@@ -13,10 +13,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
+    - uses: actions/setup-node@v2
       with:
         node-version: '12.18.3'
         registry-url: 'https://registry.npmjs.org'
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     - name: Windows build
       if: ${{ matrix.os == 'windows-latest' }}
@@ -37,32 +39,32 @@ jobs:
       run: |
         chmod +x ./script/build.sh
         ./script/build.sh
+    
+    - name: Cache node modules
+      uses: actions/cache@v2
+      with:
+        path: ./download
+        key: ${{ runner.os }}-test-download
 
     - name: Test
-      run: npm run test-audio
+      run: npm test
 
-    - name: Before Deploy
-      if: ${{ startsWith(github.event.ref, 'refs/tags') }}
-      run: node ./script/before-deploy.js
+    # - name: Before Deploy
+    #   if: ${{ startsWith(github.event.ref, 'refs/tags') }}
+    #   run: node ./script/before-deploy.js
 
     - name: Publish
       if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.os == 'ubuntu-latest' }}
-      run: |
-        node ./script/before-publish.js
-        npm publish
-        rm -rf ./.npmrc
-      env:
-        # NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        NPMTOKEN: ${{ secrets.NPM_TOKEN }}
+      run: npm publish
 
-    - name: Create release
-      if: ${{ startsWith(github.event.ref, 'refs/tags') }}
-      uses: toyobayashi/upload-release-assets@v3.0.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.event.after }}
-        release_name: ${{ github.event.after }}
-        draft: true
-        prerelease: false
-        assets: ./release/*.node
+    # - name: Create release
+    #   if: ${{ startsWith(github.event.ref, 'refs/tags') }}
+    #   uses: toyobayashi/upload-release-assets@v3.0.0
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: ${{ github.event.after }}
+    #     release_name: ${{ github.event.after }}
+    #     draft: true
+    #     prerelease: false
+    #     assets: ./release/*.node
