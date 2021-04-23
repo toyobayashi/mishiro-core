@@ -1,14 +1,4 @@
-import * as http from 'http'
-
-export declare interface RequestOption {
-  url: string
-  method?: string
-  timeout?: number
-  headers?: any
-  body?: string | Buffer,
-  path?: string
-  onData?: (prog: ProgressInfo) => void
-}
+import { IDownload } from '@tybys/downloader'
 
 export declare interface ProgressInfo {
   name?: string
@@ -66,46 +56,30 @@ export declare enum ResourceType {
   MOVIE = 3
 }
 
+export declare interface DownloadPromise<T> extends Promise<T> {
+  download: IDownload
+}
+
 export declare class Downloader {
   static RES_HOST_BASE: string
   static IMG_HOST_BASE: string
-  tasks: any[][] | { name: string; hash: string; [x: string]: any }[]
-  index: number
-  req: http.ClientRequest | null
-  isContinue: boolean
-  rename: boolean
   autoDecLz4: boolean
 
   setAutoDecLz4 (v: boolean): void
   getAutoDecLz4 (): boolean
-  downloadOne (u: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
-  downloadOneRaw (type: ResourceType, hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+  downloadOne (u: string, p: string, onData?: (prog: ProgressInfo) => void): DownloadPromise<string>
+  downloadOneRaw (type: ResourceType, hash: string, p: string, onData?: (prog: ProgressInfo) => void): DownloadPromise<string>
 
-  download (tasks: any[][], start?: (task: any[]) => void, onData?: (prog: ProgressInfo) => void, complete?: (task: any[]) => void, stop?: (task: any[]) => void): Promise<string[]>
-  batchDownload (manifests: { name: string; hash: string; [x: string]: any }[], targetDir: string, start?: (task: { name: string; hash: string; [x: string]: any }, filepath: string) => void, onData?: (prog: ProgressInfo) => void, complete?: (task: { name: string; hash: string; [x: string]: any }, filepath: string) => void, stop?: (task: { name: string; hash: string; [x: string]: any }, filepath: string) => void): Promise<string[]>
-  stop (stopCallback?: () => void): void
-  stopCurrent (): void
-
-  downloadManifest (resVer: number | string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
-  downloadAsset (hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
-  downloadSound (k: string, hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
-  downloadMovie (hash: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
-  downloadDatabase (hash: string, p: string, onData?: (prog: ProgressInfo) => void, suffix?: string): Promise<string>
-  downloadSpread (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
-  downloadIcon (id: string, p: string, onData?: (prog: ProgressInfo) => void): Promise<string>
+  downloadManifest (resVer: number | string, p: string, onData?: (prog: ProgressInfo) => void): DownloadPromise<string>
+  downloadAsset (hash: string, p: string, onData?: (prog: ProgressInfo) => void): DownloadPromise<string>
+  downloadSound (k: string, hash: string, p: string, onData?: (prog: ProgressInfo) => void): DownloadPromise<string>
+  downloadMovie (hash: string, p: string, onData?: (prog: ProgressInfo) => void): DownloadPromise<string>
+  downloadDatabase (hash: string, p: string, onData?: (prog: ProgressInfo) => void, suffix?: string): DownloadPromise<string>
+  downloadSpread (id: string, p: string, onData?: (prog: ProgressInfo) => void): DownloadPromise<string>
+  downloadIcon (id: string, p: string, onData?: (prog: ProgressInfo) => void): DownloadPromise<string>
 }
 
-declare declare class FileReader {
-  constructor (buf: Buffer)
-  readUInt8 (): number
-  readUInt16LE (): number
-  readUInt32LE (): number
-  copy (target: Buffer | Uint8Array, targetStart: number, thisSize: number): void
-  seek (pos: number): void
-  tell (): number
-}
-
-declare declare class Config {
+export declare interface IConfig {
   getCallbackInterval (): number
   setCallbackInterval (num: number): void
   getBitRate (): number
@@ -123,7 +97,7 @@ export declare namespace util {
   export function unpackTexture2D (assetBundle: string, targetDir?: string): Promise<string[]>
 }
 
-declare type AcbResult = string[] & { dirname: string }
+export declare type AcbResult = string[] & { dirname: string }
 
 export declare namespace audio {
   export function acb2hca (acb: string, targetDir?: string): Promise<AcbResult>
@@ -138,4 +112,4 @@ export declare namespace movie {
   export function demuxAsync (usmFile: string, outdir?: string): Promise<string>
 }
 
-export declare const config: Config
+export declare const config: IConfig
