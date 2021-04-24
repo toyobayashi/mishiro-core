@@ -63,6 +63,7 @@ export declare interface DownloadPromise<T> extends Promise<T> {
 export declare class Downloader {
   static RES_HOST_BASE: string
   static IMG_HOST_BASE: string
+  static getUrl (type: ResourceType, hash: string): string
   autoDecLz4: boolean
 
   setAutoDecLz4 (v: boolean): void
