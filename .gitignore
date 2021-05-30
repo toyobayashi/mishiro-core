@@ -4,5 +4,9 @@ node_modules
 /build
 /release
 /dist
+
 .local
 .cgenbuild
+CMakeLists.txt
+/*.zip
+package-lock.json

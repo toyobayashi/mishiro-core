@@ -10,5 +10,10 @@ node_modules
 /dist/*.node
 .github
 .gitattributes
+
 .local
 .cgenbuild
+CMakeLists.txt
+/*.zip
+cgen.config.*
+/src/wasm
