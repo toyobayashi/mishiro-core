@@ -10,6 +10,8 @@ mkdir -p ./.local
 unzip ffmpeg-wasm-n4.4-1.zip -d ./.local
 cp -rpf ./.local/* $EMSDK/upstream/emscripten/system/local
 npm run build:wasm
+if [ "$?" -ne 0 ]; then exit $?; fi
+
 mkdir -p ./dist
 cp -rpf ./.cgenbuild/Release/audio.js ./dist/
 cp -rpf ./.cgenbuild/Release/audio.wasm ./dist/

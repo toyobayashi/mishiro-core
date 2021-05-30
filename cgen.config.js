@@ -26,10 +26,10 @@ module.exports = function (_options, { isDebug }) {
           'avcodec',
           'avformat',
           'avutil',
-          'swresample'/* ,
+          'swresample',
+          'mp3lame'/* ,
           'avfilter',
-          'swscale',
-          'mp3lame' */
+          'swscale' */
         ],
         wrapScript: './src/wasm/wrap.js',
         compileOptions: [...commonFlags],
