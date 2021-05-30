@@ -1,8 +1,7 @@
 {
   "variables": {
     "module_name": "core",
-    "module_path": "./dist",
-    "PRODUCT_DIR": "./build/Release"
+    "module_path": "./dist"
   },
   'targets': [
     {
