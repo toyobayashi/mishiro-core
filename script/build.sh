@@ -8,7 +8,7 @@ npm install
 curl -O -L https://github.com/toyobayashi/wasm-ffmpeg/releases/download/n4.4-1/ffmpeg-wasm-n4.4-1.zip
 mkdir -p ./.local
 unzip ffmpeg-wasm-n4.4-1.zip -d ./.local
-cp -rpf ./.local $EMSDK/upstream/emscripten/system/local
+cp -rpf ./.local/* $EMSDK/upstream/emscripten/system/local
 npm run build:wasm
 mkdir -p ./dist
 cp -rpf ./.cgenbuild/Release/audio.js ./dist/
