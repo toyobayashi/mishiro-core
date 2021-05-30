@@ -6,7 +6,7 @@ module.exports = function (_options, { isDebug }) {
 
   const commonFlags = [
     '--bind',
-    '-sINITIAL_MEMORY=33554432',
+    // '-sINITIAL_MEMORY=33554432',
     '-sALLOW_MEMORY_GROWTH=1',
     ...(isDebug ? debugFlags : [])
   ]
@@ -19,19 +19,19 @@ module.exports = function (_options, { isDebug }) {
         type: 'exe',
         sources: [
           './src/wasm/transcode_aac.c',
-          './src/wasm/transcoding.c',
+          // './src/wasm/transcoding.c',
           './src/wasm/binding.cpp'
         ],
         libs: [ // $EMSDK/upstream/emscripten/system/local/lib
           'avcodec',
           'avformat',
           'avutil',
-          'swresample',
+          'swresample'/* ,
           'avfilter',
           'swscale',
-          'mp3lame'
+          'mp3lame' */
         ],
-        wrapScript: './script/wrap.js',
+        wrapScript: './src/wasm/wrap.js',
         compileOptions: [...commonFlags],
         linkOptions: [...commonFlags, '-lnodefs.js']
       }
