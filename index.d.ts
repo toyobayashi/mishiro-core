@@ -32,6 +32,10 @@ export declare class Client {
   udid: string
   sid: string
   resVer: string
+  proxy: string
+
+  getProxy (): string
+  setProxy (proxy: string): void
   post (path: string, args: any, headerEx?: { [x: string]: string }): Promise<ServerResponse>
   check (): Promise<number>
   getProfile (viewer: string | number): Promise<ServerResponse>
@@ -65,7 +69,10 @@ export declare class Downloader {
   static IMG_HOST_BASE: string
   static getUrl (type: ResourceType, hash: string): string
   autoDecLz4: boolean
+  proxy: string
 
+  getProxy (): string
+  setProxy (proxy: string): void
   setAutoDecLz4 (v: boolean): void
   getAutoDecLz4 (): boolean
   downloadOne (u: string, p: string, onData?: (prog: ProgressInfo) => void): DownloadPromise<string>

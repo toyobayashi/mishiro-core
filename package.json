@@ -1,6 +1,6 @@
 {
   "name": "mishiro-core",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "description": "CGSS JavaScript library in Node.js",
   "main": "index.js",
   "scripts": {
@@ -46,6 +46,7 @@
     "usm-decrypter": "1.1.0",
     "jimp": "0.16.1",
     "msgpack-lite": "0.1.26",
-    "node-addon-api": "3.1.0"
+    "node-addon-api": "3.2.0",
+    "proxy-agent": "4.0.1"
   }
 }
