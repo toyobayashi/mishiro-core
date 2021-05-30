@@ -24,6 +24,9 @@ jobs:
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+    - if: ${{matrix.os == 'macos-latest'}}
+      run: brew install make
+
     - name: Windows build
       if: ${{ matrix.os == 'windows-latest' }}
       shell: cmd
