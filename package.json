@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node-gyp rebuild",
+    "build:wasm": "cgen rebuild -e",
     "test": "mocha",
     "test-audio": "mocha ./test/audio.test.js",
     "test-check": "mocha ./test/check.test.js",
@@ -29,6 +30,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@tybys/cgen": "^0.6.4",
     "eslint": "^7.24.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",

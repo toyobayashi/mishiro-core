@@ -6,7 +6,7 @@
         "${workspaceFolder}/node_modules/node-addon-api",
         "${workspaceFolder}/deps/lame/include",
         "${workspaceFolder}/deps/lz4/lib",
-        "${env:HOME}/AppData/Local/node-gyp/Cache/14.15.1/include/node"
+        "${env:HOME}/AppData/Local/node-gyp/Cache/14.16.0/include/node"
       ],
       "defines": [
         "_DEBUG",
@@ -14,10 +14,28 @@
         "_UNICODE"
       ],
       "windowsSdkVersion": "10.0.19041.0",
-      "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.23.28105/bin/Hostx64/x64/cl.exe",
+      "compilerPath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.28.29910\\bin\\Hostx64\\x64\\cl.exe",
       "cStandard": "c11",
       "cppStandard": "c++11",
       "intelliSenseMode": "msvc-x64"
+    },
+    {
+      "name": "Emscripten",
+      "defines": ["${defines}"],
+      "compilerPath": "${env:EMSDK}/upstream/emscripten/emcc",
+      "intelliSenseMode": "clang-x64",
+      "cStandard": "c99",
+      "cppStandard": "c++11",
+      "includePath": ["${includePath}", "${EMSDK}/upstream/emscripten/system/local/include"]
+    },
+    {
+      "name": "Win32 Emscripten",
+      "defines": ["${defines}"],
+      "compilerPath": "${env:EMSDK}/upstream/emscripten/emcc.bat",
+      "intelliSenseMode": "clang-x64",
+      "cStandard": "c99",
+      "cppStandard": "c++11",
+      "includePath": ["${includePath}", "${EMSDK}/upstream/emscripten/system/local/include"]
     }
   ],
   "version": 4
