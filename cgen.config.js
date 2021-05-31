@@ -1,4 +1,6 @@
-module.exports = function (_options, { isDebug }) {
+const cgen = require('@tybys/cgen')
+
+module.exports = cgen.defineFunctionConfig(function (_options, { isDebug }) {
   const debugFlags = [
     '-sDISABLE_EXCEPTION_CATCHING=0',
     '-sSAFE_HEAP=1'
@@ -31,10 +33,13 @@ module.exports = function (_options, { isDebug }) {
           'avfilter',
           'swscale' */
         ],
-        wrapScript: './src/wasm/wrap.js',
+        emwrap: {
+          wrapScript: './src/wasm/wrap.js',
+          exportsOnInit: ['FS', 'NODEFS']
+        },
         compileOptions: [...commonFlags],
         linkOptions: [...commonFlags, '-lnodefs.js']
       }
     ]
   }
-}
+})
