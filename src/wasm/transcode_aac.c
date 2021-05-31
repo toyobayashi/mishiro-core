@@ -43,8 +43,6 @@
 
 #include "libswresample/swresample.h"
 
-#define OUTPUT_CHANNELS 2
-
 /**
  * Open an input file and the required decoder.
  * @param      filename             File to be opened
@@ -208,8 +206,8 @@ static int open_output_file(const char *filename,
 
     /* Set the basic encoder parameters.
      * The input file's sample rate is used to avoid a sample rate conversion. */
-    avctx->channels       = OUTPUT_CHANNELS;
-    avctx->channel_layout = av_get_default_channel_layout(OUTPUT_CHANNELS);
+    avctx->channels       = input_codec_context->channels;
+    avctx->channel_layout = av_get_default_channel_layout(input_codec_context->channels);
     avctx->sample_rate    = input_codec_context->sample_rate;
     avctx->sample_fmt     = output_codec->sample_fmts[0];
     avctx->bit_rate       = bit_rate;

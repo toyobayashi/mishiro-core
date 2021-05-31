@@ -73,7 +73,7 @@ describe('cgss.audio.hca2wav()', () => {
 })
 
 describe('cgss.audio.wav2mp3()', () => {
-  it('bgm_commu_kawaii.wav', async function () {
+  it('bgm_commu_kawaii.wav -> mp3', async function () {
     this.timeout(Infinity)
     let callCount = 0
     const mp3 = await audio.wav2mp3(
@@ -90,8 +90,18 @@ describe('cgss.audio.wav2mp3()', () => {
   })
 })
 
+describe('cgss.audio.wav2aac()', () => {
+  it('bgm_commu_kawaii.wav -> aac', async function () {
+    this.timeout(Infinity)
+    const aac = await audio.wav2aac(
+      path.join(__dirname, '../download/_acb_bgm_commu_kawaii.acb', 'bgm_commu_kawaii.wav')
+    )
+    assert.ok(fs.existsSync(aac))
+  })
+})
+
 describe('cgss.audio.hca2mp3()', () => {
-  it('bgm_commu_ashita.hca', async function () {
+  it('bgm_commu_ashita.hca -> mp3', async function () {
     this.timeout(Infinity)
     let callCount = 0
     const mp3 = await audio.hca2mp3(path.join(__dirname, '../download/_acb_bgm_commu_ashita.acb', 'bgm_commu_ashita.hca'), '', function (data) {
@@ -101,6 +111,15 @@ describe('cgss.audio.hca2mp3()', () => {
     assert.ok(path.parse(mp3).base === 'bgm_commu_ashita.mp3')
     assert.ok(fs.existsSync(mp3))
     assert.ok(cgss.config.getProgressCallback() ? (callCount !== 0) : (callCount === 0))
+  })
+})
+
+describe('cgss.audio.hca2aac()', () => {
+  it('bgm_commu_ashita.hca -> aac', async function () {
+    this.timeout(Infinity)
+    const aac = await audio.hca2aac(path.join(__dirname, '../download/_acb_bgm_commu_ashita.acb', 'bgm_commu_ashita.hca'))
+    assert.ok(path.parse(aac).base === 'bgm_commu_ashita.aac')
+    assert.ok(fs.existsSync(aac))
   })
 })
 
@@ -137,7 +156,7 @@ describe('cgss.audio.acb2wav()', () => {
 })
 
 describe('cgss.audio.acb2mp3()', () => {
-  it('card_100071.acb', async function () {
+  it('card_100071.acb -> mp3', async function () {
     this.timeout(Infinity)
     const acb = await dler.downloadSound('v', 'cd6af2ed9fa3a70f92ebee9946e8300e', path.join(__dirname, '../download', 'card_100071.acb'), (prog) => {
       progress(prog.name, prog.current, prog.max, prog.loading)
@@ -150,6 +169,26 @@ describe('cgss.audio.acb2mp3()', () => {
     assert.ok(l.indexOf('') === -1)
     for (let i = 0; i < l.length; i++) {
       assert.ok(path.parse(l[i]).ext === '.mp3')
+      assert.ok(fs.existsSync(l[i]))
+    }
+    assert.ok(typeof l.dirname === 'string')
+  })
+})
+
+describe('cgss.audio.acb2aac()', () => {
+  it('card_100520.acb -> aac', async function () {
+    this.timeout(Infinity)
+    const acb = await dler.downloadSound('v', 'cad5e95c638d54709960fb5d95e31e45', path.join(__dirname, '../download', 'card_100520.acb'), (prog) => {
+      progress(prog.name, prog.current, prog.max, prog.loading)
+    })
+    console.log()
+    assert.ok(acb === path.join(__dirname, '../download', 'card_100520.acb'))
+    const l = await audio.acb2aac(acb, (c, t, _n) => {
+      console.log('Completed: ' + c + ' / ' + t)
+    })
+    assert.ok(l.indexOf('') === -1)
+    for (let i = 0; i < l.length; i++) {
+      assert.ok(path.parse(l[i]).ext === '.aac')
       assert.ok(fs.existsSync(l[i]))
     }
     assert.ok(typeof l.dirname === 'string')
