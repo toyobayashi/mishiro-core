@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@tybys/downloader": "^0.1.2",
+    "@tybys/oid": "^3.0.0",
     "acb": "1.2.5",
     "got": "^11.8.2",
     "hca-decoder": "1.2.0",
