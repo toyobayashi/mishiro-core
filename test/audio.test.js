@@ -103,7 +103,7 @@ describe('cgss.audio.wav2aac()', () => {
       }
     )
     assert.ok(fs.existsSync(aac))
-    assert.ok(callCount !== 0)
+    assert.ok(cgss.config.getProgressCallback() ? (callCount !== 0) : (callCount === 0))
   })
 })
 
@@ -131,7 +131,7 @@ describe('cgss.audio.hca2aac()', () => {
     })
     assert.ok(path.parse(aac).base === 'bgm_commu_ashita.aac')
     assert.ok(fs.existsSync(aac))
-    assert.ok(callCount !== 0)
+    assert.ok(cgss.config.getProgressCallback() ? (callCount !== 0) : (callCount === 0))
   })
 })
 

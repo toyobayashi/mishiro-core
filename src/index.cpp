@@ -1,6 +1,7 @@
 #include "LameAsyncWorker.h"
 #include "EncodeWorker.hpp"
 #include "lz4dec.h"
+#include "InstanceData.h"
 
 using namespace Napi;
 
@@ -89,14 +90,15 @@ static Value _setProgressCallback(const CallbackInfo& info) {
     return env.Undefined();
   }
 
-  LameAsyncWorker::setProgressCallback(info[0].As<Boolean>().Value());
+  AddonGlobalData* data = env.GetInstanceData<AddonGlobalData>();
+  data->progressCallback = info[0].As<Boolean>().Value();
   return env.Undefined();
 }
 
 static Value _getProgressCallback(const CallbackInfo& info) {
   Env env = info.Env();
-
-  return Boolean::New(env, LameAsyncWorker::getProgressCallback());
+  AddonGlobalData* data = env.GetInstanceData<AddonGlobalData>();
+  return Boolean::New(env, data->progressCallback);
 }
 
 static Value _lz4dec(const CallbackInfo& info) {
@@ -155,6 +157,21 @@ static Napi::Value _wav2aac(const Napi::CallbackInfo& info) {
     return env.Undefined();
   }
 
+  if (!info[2].IsNumber()) {
+    Napi::TypeError::New(env, functionSignature + ": typeof bitRate !== 'number'").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  if (!info[3].IsNumber()) {
+    Napi::TypeError::New(env, functionSignature + ": typeof sampleRate !== 'number'").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  if (!info[4].IsNumber()) {
+    Napi::TypeError::New(env, functionSignature + ": typeof channels !== 'number'").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
   if (!info[5].IsFunction()) {
     Napi::TypeError::New(env, functionSignature + ": typeof onComplete !== 'function'").ThrowAsJavaScriptException();
     return env.Undefined();
@@ -190,7 +207,17 @@ static Napi::Value _wav2aac(const Napi::CallbackInfo& info) {
   return env.Undefined();
 }
 
+static void _deleteAddonData(Env env, AddonGlobalData* data) {
+  delete data;
+}
+
 static Object _index(Env env, Object exports) {
+  AddonGlobalData* globalData = env.GetInstanceData<AddonGlobalData>();
+  if (globalData == nullptr) {
+    AddonGlobalData* data = new AddonGlobalData;
+    data->progressCallback = true;
+    env.SetInstanceData<AddonGlobalData, _deleteAddonData>(data);
+  }
   exports["wav2mp3"] = Function::New(env, _wav2mp3, "wav2mp3");
   exports["wav2aac"] = Function::New(env, _wav2aac, "wav2aac");
   exports["setBitRate"] = Function::New(env, _setBitRate, "setBitRate");

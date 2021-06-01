@@ -9,19 +9,11 @@
 #include "./LameAsyncWorker.h"
 #include <lame.h>
 #include "./wav.h"
+#include "InstanceData.h"
 
 using namespace Napi;
 
 int LameAsyncWorker::_bitRate = 128;
-bool LameAsyncWorker::_progressCallback = true;
-
-void LameAsyncWorker::setProgressCallback(bool value) {
-  _progressCallback = value;
-}
-
-bool LameAsyncWorker::getProgressCallback() {
-  return _progressCallback;
-}
 
 void LameAsyncWorker::setBitRate(int rate) {
   // 16 24 32 40 48 56 64 80 96 112 128 160 192 224 256 320
@@ -107,6 +99,7 @@ void LameAsyncWorker::Execute(const ExecutionProgress& progress) {
   lame_init_params(lame);
 
   long loaded = start;
+  bool _progressCallback = Env().GetInstanceData<AddonGlobalData>()->progressCallback;
   do {
     read = fread(wavBuffer, sizeof(short int) * CHANNEL, WAV_SIZE, wav);
     loaded += read * sizeof(short int) * CHANNEL;

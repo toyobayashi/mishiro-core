@@ -13,6 +13,7 @@
 #include "../deps/fdk-aac/wavreader.h"
 #include "aacdecoder_lib.h"
 #include "aacenc_lib.h"
+#include "InstanceData.h"
 
 EncodeWorker::EncodeWorker(const std::string& inputFileName,
                            const std::string& outputFileName,
@@ -159,6 +160,7 @@ void EncodeWorker::Execute(const ExecutionProgress& progress) {
 #endif
 
   long loaded = 0;
+  bool _progressCallback = Env().GetInstanceData<AddonGlobalData>()->progressCallback;
   do {
     int numRead = wav_read_data(
         pWav, (unsigned char*)&inputBuffer[inargs.numInSamples],
@@ -187,7 +189,7 @@ void EncodeWorker::Execute(const ExecutionProgress& progress) {
       fwrite(outputBuffer, 1, outargs.numOutBytes, outf);
     }
 
-    if (!this->onProgress.IsEmpty()) {
+    if (_progressCallback && !this->onProgress.IsEmpty()) {
       EncodeData data;
       data.loaded = (double)loaded;
       data.total = (double)dataLength;
