@@ -6,6 +6,15 @@
         "${workspaceFolder}/node_modules/node-addon-api",
         "${workspaceFolder}/deps/lame/include",
         "${workspaceFolder}/deps/lz4/lib",
+        "${workspaceFolder}/deps/fdk-aac/libAACdec/include",
+        "${workspaceFolder}/deps/fdk-aac/libAACenc/include",
+        "${workspaceFolder}/deps/fdk-aac/libFDK/include",
+        "${workspaceFolder}/deps/fdk-aac/libMpegTPDec/include",
+        "${workspaceFolder}/deps/fdk-aac/libMpegTPEnc/include",
+        "${workspaceFolder}/deps/fdk-aac/libPCMutils/include",
+        "${workspaceFolder}/deps/fdk-aac/libSBRdec/include",
+        "${workspaceFolder}/deps/fdk-aac/libSBRenc/include",
+        "${workspaceFolder}/deps/fdk-aac/libSYS/include",
         "${env:HOME}/AppData/Local/node-gyp/Cache/14.16.0/include/node"
       ],
       "defines": [

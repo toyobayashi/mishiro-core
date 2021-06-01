@@ -5,10 +5,7 @@
 #include <napi.h>
 #include <string>
 
-typedef struct EncodeData {
-  double total;
-  double loaded;
-} EncodeData;
+#include "EncodeData.h"
 
 class LameAsyncWorker : public Napi::AsyncProgressQueueWorker<EncodeData> {
   public:

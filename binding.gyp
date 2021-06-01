@@ -9,6 +9,7 @@
       'sources': [
         'src/index.cpp',
         'src/LameAsyncWorker.cpp',
+        'src/EncodeWorker.cpp',
         'src/lz4dec.c',
       ],
       'includes': [
@@ -17,6 +18,7 @@
       'dependencies': [
         'deps/lame/libmp3lame.gyp:mp3lame',
         'deps/lz4/lz4.gyp:lz4',
+        'deps/fdk-aac/fdk-aac.gyp:fdk-aac'
       ],
     },
     {

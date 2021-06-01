@@ -1,4 +1,5 @@
-#include "./LameAsyncWorker.h"
+#include "LameAsyncWorker.h"
+#include "EncodeWorker.hpp"
 #include "lz4dec.h"
 
 using namespace Napi;
@@ -134,8 +135,64 @@ static Value _lz4dec(const CallbackInfo& info) {
   return ret;
 }
 
+static Napi::Value _wav2aac(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  std::string functionSignature = "wav2aac(wavPath: string, aacPath: string, bitRate: number, sampleRate: number, channels: number, onComplete: (err: Error | null) => void, onProgress?: (progress: { total: number; loaded: number; percentage: number }) => void)";
+
+  if (info.Length() < 6) {
+    Napi::TypeError::New(env, functionSignature + ": arguments.length < 6").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  if (!info[0].IsString()) {
+    Napi::TypeError::New(env, functionSignature + ": typeof wavPath !== 'string'").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  if (!info[1].IsString()) {
+    Napi::TypeError::New(env, functionSignature + ": typeof aacPath !== 'string'").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  if (!info[5].IsFunction()) {
+    Napi::TypeError::New(env, functionSignature + ": typeof onComplete !== 'function'").ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  if (info.Length() > 6) {
+    if (!info[6].IsFunction()) {
+      Napi::TypeError::New(env, functionSignature + ": typeof onProgress !== 'function'").ThrowAsJavaScriptException();
+      return env.Undefined();
+    }
+    EncodeWorker *w = new EncodeWorker(
+      info[0].As<Napi::String>().Utf8Value(),
+      info[1].As<Napi::String>().Utf8Value(),
+      info[2].As<Napi::Number>().Int32Value(),
+      info[3].As<Napi::Number>().Int32Value(),
+      info[4].As<Napi::Number>().Int32Value(),
+      info[5].As<Napi::Function>(),
+      info[6].As<Napi::Function>()
+    );
+    w->Queue();
+  } else {
+    EncodeWorker *w = new EncodeWorker(
+      info[0].As<Napi::String>().Utf8Value(),
+      info[1].As<Napi::String>().Utf8Value(),
+      info[2].As<Napi::Number>().Int32Value(),
+      info[3].As<Napi::Number>().Int32Value(),
+      info[4].As<Napi::Number>().Int32Value(),
+      info[5].As<Napi::Function>()
+    );
+    w->Queue();
+  }
+
+  return env.Undefined();
+}
+
 static Object _index(Env env, Object exports) {
   exports["wav2mp3"] = Function::New(env, _wav2mp3, "wav2mp3");
+  exports["wav2aac"] = Function::New(env, _wav2aac, "wav2aac");
   exports["setBitRate"] = Function::New(env, _setBitRate, "setBitRate");
   exports["getBitRate"] = Function::New(env, _getBitRate, "getBitRate");
   exports["setProgressCallback"] = Function::New(env, _setProgressCallback, "setProgressCallback");
