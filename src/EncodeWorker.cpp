@@ -46,17 +46,17 @@ EncodeWorker::EncodeWorker(const std::string& inputFileName,
       onProgress(Napi::Persistent(progressCallback)) {}
 
 void EncodeWorker::Execute(const ExecutionProgress& progress) {
-  static void* inBuffer[] = {inputBuffer, ancillaryBuffer, &metaDataSetup};
-  static INT inBufferIds[] = {IN_AUDIO_DATA, IN_ANCILLRY_DATA,
+  void* inBuffer[] = {inputBuffer, ancillaryBuffer, &metaDataSetup};
+  INT inBufferIds[] = {IN_AUDIO_DATA, IN_ANCILLRY_DATA,
                               IN_METADATA_SETUP};
-  static INT inBufferSize[] = {sizeof(inputBuffer), sizeof(ancillaryBuffer),
-                               sizeof(metaDataSetup)};
-  static INT inBufferElSize[] = {sizeof(INT_PCM), sizeof(UCHAR),
-                                 sizeof(AACENC_MetaData)};
-  static void* outBuffer[] = {outputBuffer};
-  static INT outBufferIds[] = {OUT_BITSTREAM_DATA};
-  static INT outBufferSize[] = {sizeof(outputBuffer)};
-  static INT outBufferElSize[] = {sizeof(UCHAR)};
+  INT inBufferSize[] = {sizeof(inputBuffer), sizeof(ancillaryBuffer),
+                                sizeof(metaDataSetup)};
+  INT inBufferElSize[] = {sizeof(INT_PCM), sizeof(UCHAR),
+                                  sizeof(AACENC_MetaData)};
+  void* outBuffer[] = {outputBuffer};
+  INT outBufferIds[] = {OUT_BITSTREAM_DATA};
+  INT outBufferSize[] = {sizeof(outputBuffer)};
+  INT outBufferElSize[] = {sizeof(UCHAR)};
 
   // char percents[200];
   float /* percent, */ old_percent = -1.0;
@@ -87,7 +87,8 @@ void EncodeWorker::Execute(const ExecutionProgress& progress) {
   inargs.numInSamples = 0;
   HANDLE_AACENCODER hAacEncoder = NULL; /* encoder handle */
   if ((ErrorStatus = aacEncOpen(&hAacEncoder, 0, 0)) != AACENC_OK) {
-    printf("Something went wrong\n");
+    SetError("Something went wrong\n");
+    return;
   }
 
 #ifdef _WIN32
@@ -104,6 +105,7 @@ void EncodeWorker::Execute(const ExecutionProgress& progress) {
 
   if (pWav == nullptr) {
     SetError(std::string("Couldn't open the file ") + _wavPath);
+    aacEncClose(&hAacEncoder);
     return;
   }
 
@@ -114,7 +116,9 @@ void EncodeWorker::Execute(const ExecutionProgress& progress) {
                          nullptr, &dataLength);
   if (r == 0) {
     SetError(std::string("Couldn't read the file ") + _wavPath);
-    return;
+    wav_read_close(pWav);
+    aacEncClose(&hAacEncoder);
+    return; 
   }
 
   ErrorStatus = aacEncoder_SetParam(hAacEncoder, AACENC_AOT, 5);

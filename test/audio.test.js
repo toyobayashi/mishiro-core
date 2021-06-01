@@ -93,10 +93,17 @@ describe('cgss.audio.wav2mp3()', () => {
 describe('cgss.audio.wav2aac()', () => {
   it('bgm_commu_kawaii.wav -> aac', async function () {
     this.timeout(Infinity)
+    let callCount = 0
     const aac = await audio.wav2aac(
-      path.join(__dirname, '../download/_acb_bgm_commu_kawaii.acb', 'bgm_commu_kawaii.wav')
+      path.join(__dirname, '../download/_acb_bgm_commu_kawaii.acb', 'bgm_commu_kawaii.wav'),
+      null,
+      function (data) {
+        callCount++
+        console.log(data)
+      }
     )
     assert.ok(fs.existsSync(aac))
+    assert.ok(callCount !== 0)
   })
 })
 
@@ -117,9 +124,14 @@ describe('cgss.audio.hca2mp3()', () => {
 describe('cgss.audio.hca2aac()', () => {
   it('bgm_commu_ashita.hca -> aac', async function () {
     this.timeout(Infinity)
-    const aac = await audio.hca2aac(path.join(__dirname, '../download/_acb_bgm_commu_ashita.acb', 'bgm_commu_ashita.hca'))
+    let callCount = 0
+    const aac = await audio.hca2aac(path.join(__dirname, '../download/_acb_bgm_commu_ashita.acb', 'bgm_commu_ashita.hca'), '', function (data) {
+      callCount++
+      console.log(data)
+    })
     assert.ok(path.parse(aac).base === 'bgm_commu_ashita.aac')
     assert.ok(fs.existsSync(aac))
+    assert.ok(callCount !== 0)
   })
 })
 
@@ -185,6 +197,8 @@ describe('cgss.audio.acb2aac()', () => {
     assert.ok(acb === path.join(__dirname, '../download', 'card_100520.acb'))
     const l = await audio.acb2aac(acb, (c, t, _n) => {
       console.log('Completed: ' + c + ' / ' + t)
+    }, (c, t, p) => {
+      console.log(c, t, p)
     })
     assert.ok(l.indexOf('') === -1)
     for (let i = 0; i < l.length; i++) {

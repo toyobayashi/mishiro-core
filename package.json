@@ -30,7 +30,6 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@tybys/cgen": "^0.7.0",
     "eslint": "^7.24.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",
@@ -42,7 +41,6 @@
   },
   "dependencies": {
     "@tybys/downloader": "^0.2.0",
-    "@tybys/oid": "^3.0.0",
     "acb": "1.2.5",
     "got": "^11.8.2",
     "hca-decoder": "1.2.0",

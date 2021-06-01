@@ -113,12 +113,12 @@ export declare namespace audio {
   export function acb2hca (acb: string, targetDir?: string): Promise<AcbResult>
   export function hca2wav (hca: string): Promise<string>
   export function wav2mp3 (wav: string, mp3?: string, onProgress?: (data: ProgressInfo) => void): Promise<string>
-  export function wav2aac (wav: string): Promise<string>
+  export function wav2aac (wav: string, mp3?: string, onProgress?: (data: ProgressInfo) => void): Promise<string>
   export function hca2mp3 (hca: string, mp3?: string, onWav2Mp3Progress?: (data: ProgressInfo) => void): Promise<string>
-  export function hca2aac (hca: string): Promise<string>
+  export function hca2aac (hca: string, mp3?: string, onWav2Mp3Progress?: (data: ProgressInfo) => void): Promise<string>
   export function acb2wav (acb: string, singleComplete?: (completed: number, total: number, filename: string) => void): Promise<AcbResult>
   export function acb2mp3 (acb: string, singleComplete?: (completed: number, total: number, filename: string) => void, onWav2Mp3Progress?: (current: number, total: number, prog: ProgressInfo) => void): Promise<AcbResult>
-  export function acb2aac (acb: string, singleComplete?: (completed: number, total: number, filename: string) => void): Promise<AcbResult>
+  export function acb2aac (acb: string, singleComplete?: (completed: number, total: number, filename: string) => void, onWav2Mp3Progress?: (current: number, total: number, prog: ProgressInfo) => void): Promise<AcbResult>
 }
 
 export declare namespace movie {
