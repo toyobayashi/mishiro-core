@@ -90,13 +90,12 @@ export declare class Downloader {
 export declare interface IConfig {
   getCallbackInterval (): number
   setCallbackInterval (num: number): void
-  getAacBitRate (): number
-  setAacBitRate (num: number): void
-  getBitRate (): number
-  setBitRate (num: number): void
   getProgressCallback (): boolean
   setProgressCallback (value: boolean): void
-  list (): { [key: string]: any }
+  list (): {
+    callbackInterval: number
+    progressCallback?: boolean
+  }
 }
 
 export declare namespace util {
@@ -119,6 +118,18 @@ export declare namespace audio {
   export function acb2wav (acb: string, singleComplete?: (completed: number, total: number, filename: string) => void): Promise<AcbResult>
   export function acb2mp3 (acb: string, singleComplete?: (completed: number, total: number, filename: string) => void, onWav2Mp3Progress?: (current: number, total: number, prog: ProgressInfo) => void): Promise<AcbResult>
   export function acb2aac (acb: string, singleComplete?: (completed: number, total: number, filename: string) => void, onWav2Mp3Progress?: (current: number, total: number, prog: ProgressInfo) => void): Promise<AcbResult>
+  export class MP3Encoder {
+    bitRate: number
+    sampleRate: number
+    channels: number
+    encode (wav: string, mp3?: string, onProgress?: (data: ProgressInfo) => void): Promise<string>
+  }
+  export class AACEncoder {
+    bitRate: number
+    sampleRate: number
+    channels: number
+    encode (wav: string, mp3?: string, onProgress?: (data: ProgressInfo) => void): Promise<string>
+  }
 }
 
 export declare namespace movie {

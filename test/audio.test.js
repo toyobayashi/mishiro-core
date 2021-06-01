@@ -9,9 +9,11 @@ const dler = new cgss.Downloader()
 const audio = cgss.audio
 
 cgss.config.setCallbackInterval(500)
-cgss.config.setBitRate(192)
 cgss.config.setProgressCallback(true)
 console.log(cgss.config.list())
+
+const mp3Encoder = new audio.MP3Encoder()
+mp3Encoder.bitRate = 192
 
 describe('cgss.audio.acb2hca()', () => {
   it('card_200087.acb', async function () {
@@ -76,7 +78,7 @@ describe('cgss.audio.wav2mp3()', () => {
   it('bgm_commu_kawaii.wav -> mp3', async function () {
     this.timeout(Infinity)
     let callCount = 0
-    const mp3 = await audio.wav2mp3(
+    const mp3 = await mp3Encoder.encode(
       path.join(__dirname, '../download/_acb_bgm_commu_kawaii.acb', 'bgm_commu_kawaii.wav'),
       null,
       function (data) {
@@ -209,8 +211,8 @@ describe('cgss.audio.acb2aac()', () => {
   })
 })
 
-function printf (str) {
-  process.stdout.write(str)
+function fprintfstderr (str) {
+  process.stderr.write(str)
 }
 
 function repeat (str, n) {
@@ -218,5 +220,5 @@ function repeat (str, n) {
 }
 
 function progress (name, _current, _max, loading) {
-  printf(LEFT + `${name} [${repeat('=', Math.round(loading / 100 * 30) - 1)}>${repeat(' ', Math.round((100 - loading) / 100 * 30))}]  `)
+  fprintfstderr(LEFT + `${name} [${repeat('=', Math.round(loading / 100 * 30) - 1)}>${repeat(' ', Math.round((100 - loading) / 100 * 30))}]  `)
 }

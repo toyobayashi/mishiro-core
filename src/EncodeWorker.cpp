@@ -126,7 +126,7 @@ void EncodeWorker::Execute(const ExecutionProgress& progress) {
   ErrorStatus = aacEncoder_SetParam(hAacEncoder, AACENC_BITRATEMODE, 0);
 
   if (_bitRate != 0) {
-    ErrorStatus = aacEncoder_SetParam(hAacEncoder, AACENC_BITRATE, (UINT)_bitRate);
+    ErrorStatus = aacEncoder_SetParam(hAacEncoder, AACENC_BITRATE, (UINT)(_bitRate * 1000));
   } else {
     ErrorStatus = aacEncoder_SetParam(hAacEncoder, AACENC_BITRATE, 160000);
   }

@@ -13,28 +13,29 @@
 
 using namespace Napi;
 
-int LameAsyncWorker::_bitRate = 128;
-
-void LameAsyncWorker::setBitRate(int rate) {
-  // 16 24 32 40 48 56 64 80 96 112 128 160 192 224 256 320
-  if (rate < 16) {
-    rate = 16;
-  } else if (rate > 320) {
-    rate = 320;
-  }
-  LameAsyncWorker::_bitRate = rate;
-}
-
-int LameAsyncWorker::getBitRate() {
-  return _bitRate;
-}
-
-LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, const Function& callback): AsyncProgressQueueWorker(callback) {
+LameAsyncWorker::LameAsyncWorker(const std::string& wavPath,
+                                 const std::string& mp3Path,
+                                 int bitRate,
+                                 int sampleRate,
+                                 int channels,
+                                 const Napi::Function& callback): AsyncProgressQueueWorker(callback) {
+  _bitRate = bitRate;
+  _sampleRate = sampleRate;
+  _channels = channels;
   _wavPath = wavPath;
   _mp3Path = mp3Path;
 }
 
-LameAsyncWorker::LameAsyncWorker(const std::string& wavPath, const std::string& mp3Path, const Function& callback, const Function& onProgress): AsyncProgressQueueWorker(callback) {
+LameAsyncWorker::LameAsyncWorker(const std::string& wavPath,
+                                 const std::string& mp3Path,
+                                 int bitRate,
+                                 int sampleRate,
+                                 int channels,
+                                 const Napi::Function& callback,
+                                 const Napi::Function& onProgress): AsyncProgressQueueWorker(callback) {
+  _bitRate = bitRate;
+  _sampleRate = sampleRate;
+  _channels = channels;
   _wavPath = wavPath;
   _mp3Path = mp3Path;
   this->onProgress = Napi::Persistent(onProgress);
@@ -86,25 +87,28 @@ void LameAsyncWorker::Execute(const ExecutionProgress& progress) {
   const int MP3_SIZE = 128 * 1024;
 
   const int CHANNEL = (int)wavstruct.fmt.NumChannels;
+  const int channels = _channels == 0 ? CHANNEL : _channels;
+  const int br = _bitRate == 0 ? 128 : _bitRate;
+  const int samplerate = _sampleRate == 0 ? (int)wavstruct.fmt.SampleRate : _sampleRate;
 
-  short int *wavBuffer = new short int[WAV_SIZE * CHANNEL];
+  short int *wavBuffer = new short int[WAV_SIZE * channels];
   unsigned char *mp3Buffer = new unsigned char[MP3_SIZE];
 
   lame_t lame = lame_init();
-  lame_set_in_samplerate(lame, (int)wavstruct.fmt.SampleRate);
-  lame_set_num_channels(lame, CHANNEL);
-  lame_set_mode(lame, CHANNEL == 1 ? MONO : (_bitRate < 160 ? JOINT_STEREO : STEREO));
+  lame_set_in_samplerate(lame, samplerate);
+  lame_set_num_channels(lame, channels);
+  lame_set_mode(lame, channels == 1 ? MONO : (br < 160 ? JOINT_STEREO : STEREO));
   // lame_set_VBR(lame, vbr_default);
-  lame_set_brate(lame, _bitRate);
+  lame_set_brate(lame, br);
   lame_init_params(lame);
 
   long loaded = start;
   bool _progressCallback = Env().GetInstanceData<AddonGlobalData>()->progressCallback;
   do {
-    read = fread(wavBuffer, sizeof(short int) * CHANNEL, WAV_SIZE, wav);
-    loaded += read * sizeof(short int) * CHANNEL;
+    read = fread(wavBuffer, sizeof(short int) * channels, WAV_SIZE, wav);
+    loaded += read * sizeof(short int) * channels;
     if (read != 0) {
-      if (CHANNEL == 1) {
+      if (channels == 1) {
         write = lame_encode_buffer(lame, wavBuffer, NULL, read, mp3Buffer, MP3_SIZE);
       } else {
         write = lame_encode_buffer_interleaved(lame, wavBuffer, read, mp3Buffer, MP3_SIZE);

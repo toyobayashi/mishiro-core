@@ -26,9 +26,14 @@ const {
   acb2hca,
   acb2wav,
   acb2mp3,
+  acb2aac,
   hca2wav,
   hca2mp3,
-  wav2mp3
+  hca2aac,
+  wav2mp3,
+  wav2aac,
+  MP3Encoder,
+  AACEncoder
 } = audio // decode music
 
 const {
