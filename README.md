@@ -32,6 +32,7 @@ const {
   hca2aac,
   wav2mp3,
   wav2aac,
+  getHcaInfo,
   MP3Encoder,
   AACEncoder
 } = audio // decode music

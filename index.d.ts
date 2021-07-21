@@ -1,4 +1,5 @@
 import { IDownload } from '@tybys/downloader'
+import { HCAInfo } from 'hca-decoder'
 
 export declare interface ProgressInfo {
   name?: string
@@ -118,6 +119,7 @@ export declare namespace audio {
   export function acb2wav (acb: string, singleComplete?: (completed: number, total: number, filename: string) => void): Promise<AcbResult>
   export function acb2mp3 (acb: string, singleComplete?: (completed: number, total: number, filename: string) => void, onWav2Mp3Progress?: (current: number, total: number, prog: ProgressInfo) => void): Promise<AcbResult>
   export function acb2aac (acb: string, singleComplete?: (completed: number, total: number, filename: string) => void, onWav2Mp3Progress?: (current: number, total: number, prog: ProgressInfo) => void): Promise<AcbResult>
+  export function getHcaInfo (hca: string): HCAInfo
   export class MP3Encoder {
     bitRate: number
     sampleRate: number
