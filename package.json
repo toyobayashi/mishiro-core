@@ -12,9 +12,6 @@
     "test-download": "mocha ./test/download.test.js",
     "before-deploy": "node ./script/before-deploy.js"
   },
-  "engines": {
-    "node": ">=10.8.0"
-  },
   "keywords": [
     "cgss",
     "deresute",
@@ -41,9 +38,9 @@
   },
   "dependencies": {
     "@tybys/downloader": "^0.2.0",
-    "acb": "1.2.5",
+    "acb": "2.1.0",
     "got": "^11.8.2",
-    "hca-decoder": "1.3.1",
+    "hca-decoder": "1.5.0",
     "usm-decrypter": "1.1.1",
     "jimp": "0.16.1",
     "msgpack-lite": "0.1.26",
