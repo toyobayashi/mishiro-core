@@ -111,7 +111,7 @@ export declare type AcbResult = string[] & { dirname: string }
 
 export declare namespace audio {
   export function acb2hca (acb: string, targetDir?: string): Promise<AcbResult>
-  export function hca2wav (hca: string | BufferLike, wav?: string): Promise<string>
+  export function hca2wav (hca: string | BufferLike, wav?: string, loop?: number, mode?: 0 | 8 | 16 | 24 | 32): Promise<string>
   export function wav2mp3 (wav: string, mp3?: string, onProgress?: (data: ProgressInfo) => void): Promise<string>
   export function wav2aac (wav: string, mp3?: string, onProgress?: (data: ProgressInfo) => void): Promise<string>
   export function hca2mp3 (hca: string | BufferLike, mp3?: string, onWav2Mp3Progress?: (data: ProgressInfo) => void): Promise<string>
