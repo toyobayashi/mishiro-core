@@ -1,6 +1,6 @@
 {
   "name": "mishiro-core",
-  "version": "6.2.0",
+  "version": "6.2.1",
   "description": "CGSS JavaScript library in Node.js",
   "main": "index.js",
   "scripts": {
@@ -40,7 +40,7 @@
     "@tybys/downloader": "^0.2.0",
     "acb": "2.1.0",
     "got": "^11.8.2",
-    "hca-decoder": "1.5.0",
+    "hca-decoder": "1.5.1",
     "usm-decrypter": "1.1.1",
     "jimp": "0.16.1",
     "msgpack-lite": "0.1.26",
