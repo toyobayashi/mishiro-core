@@ -165,10 +165,13 @@ const baseStrings = {
   800: 'SInt16',
   814: 'int64',
   840: 'string',
+  847: 'TextAsset',
   874: 'Texture2D',
   884: 'Transform',
   894: 'TypelessData',
   907: 'UInt16',
+  914: 'UInt32',
+  921: 'UInt64',
   928: 'UInt8',
   934: 'unsigned int',
   981: 'vector',
@@ -217,6 +220,14 @@ function unlz4 (data, uncompSize) {
   return d
 }
 
+const COMP_TYPES = {
+  0: '',
+  1: "LZMA",
+  2: "LZ4",
+  3: "LZ4HC",
+  4: "LZHAM",
+}
+
 class UnityFS {
   constructor (s, streamVer) {
     this.s = s
@@ -225,6 +236,10 @@ class UnityFS {
     const hdrCompSize = this.s.readUInt32BE()
     const hdrUncompSize = this.s.readUInt32BE()
     const flags = this.s.readUInt32BE()
+
+    if (streamVer >= 7) {
+      this.s.read(15)
+    }
 
     let ciblock
     if ((flags & 0x80) === 0x00) {
@@ -254,11 +269,21 @@ class UnityFS {
       let busize = cidata.readUInt32BE()
       let bcsize = cidata.readUInt32BE()
       let bflags = cidata.readUInt16BE()
-      if (busize !== bcsize) {
-        throw new Error('Compressed blocks not supported yet')
+      if (streamVer >= 7) {
+        cidata.read(0)
       }
 
-      blocks.push(this.s.read(busize))
+      let blk = this.s.read(bcsize)
+
+      const ctype = COMP_TYPES[bflags & 0x3f] == null ? (bflags & 0x3f) : COMP_TYPES[bflags & 0x3f]
+      if (ctype === '') {
+        // pass
+      } else if (ctype === 'LZ4' || ctype === 'LZ4HC') {
+        blk = unlz4(blk, busize)
+      } else {
+        throw new Error(`Compression type ${COMP_TYPES[bflags] == null ? String(bflags) : COMP_TYPES[bflags]} not supported yet`)
+      }
+      blocks.push(blk)
     }
 
     this.blockdata = Buffer.concat(blocks)
@@ -300,7 +325,7 @@ class Asset {
     this.unityVersion = this.s.readStr()
     this.unityRevision = this.s.readStr()
 
-    // let hdrSize
+    let hdrSize
 
     if (t === 'UnityRaw') {
       // let size = this.s.readUInt32BE()
@@ -342,7 +367,14 @@ class Asset {
     this.fileGen = this.s.readUInt32BE()
     this.dataOffset = this.s.readUInt32BE()
 
-    this.s.read(4)
+    if (this.fileGen >= 22) {
+      this.tableSize = this.s.readUInt64BE()
+      hdrSize = this.s.readUInt64BE()
+      this.dataOffset = Number(this.s.readUInt64BE())
+      let unk = this.s.readUInt64BE()
+    } else {
+      this.s.read(4)
+    }
     this.version = this.s.readStr()
     this.platform = this.s.readUInt32LE()
     this.classIds = []
@@ -358,7 +390,15 @@ class Asset {
     for (let i = 0; i < count; i++) {
       this.s.align(4)
       let off, classId
-      if (this.fileGen >= 17) {
+      if (this.fileGen >= 22) {
+        /** @type {Buffer} */
+        const dhdr = this.s.read(24)
+        const pathId = dhdr.readBigUInt64LE(0)
+        off = Number(dhdr.readBigUInt64LE(8))
+        let size = dhdr.readUInt32LE(16)
+        const typeId = dhdr.readUInt32LE(20)
+        classId = this.classIds[typeId]
+      } else if (this.fileGen >= 17) {
         let dhdr = this.s.read(20)
         off = dhdr.slice(8).readUInt32LE()
         let typeId = dhdr.slice(16).readUInt32LE()
@@ -391,38 +431,81 @@ class Asset {
   }
 
   decodeAttrtab () {
-    let code, attrCnt, stabLen
+    let code, attrCnt, stabLen, unk
     // console.log(this)
     if (this.fileGen >= 17) {
       // let hdr = this.s.read(31)
       code = this.s.readUInt32LE()
-      this.s.read(19)
+      // this.s.read(19)
+      unk = this.s.readUInt8()
+      const idtype = this.s.readUInt16LE()
+      let ident
+      if (idtype == 0xffff) {
+        ident = this.s.read(16)
+      } else if (idtype === 0) {
+        ident = this.s.read(32)
+      } else {
+        throw new Error(`Unknown idtype ${idtype}`)
+      }
       attrCnt = this.s.readUInt32LE()
       stabLen = this.s.readUInt32LE()
     } else {
+      let hdr = this.s.read(28)
       code = this.s.readUInt32LE()
       this.s.read(16)
       attrCnt = this.s.readUInt32LE()
       stabLen = this.s.readUInt32LE()
     }
 
-    let attrs = this.s.read(attrCnt * 24)
+    let attrs
+    if (this.fileGen >= 21) {
+      attrs = this.s.read(attrCnt * 32)
+    } else {
+      attrs = this.s.read(attrCnt * 24)
+    }
     let stab = this.s.read(stabLen)
     let defs = []
 
     if (attrCnt >= 1024) throw new Error('attrCnt >= 1024')
 
     for (let i = 0; i < attrCnt; i++) {
-      let sliceattrs = attrs.slice(i * 24, i * 24 + 24)
-      let a1 = sliceattrs[0]
-      let a2 = sliceattrs[1]
-      let level = sliceattrs[2]
-      let a4 = sliceattrs[3]
-      let typeOff = sliceattrs.slice(4).readUInt32LE()
-      let nameOff = sliceattrs.slice(8).readUInt32LE()
-      let size = sliceattrs.slice(12).readUInt32LE()
-      let idx = sliceattrs.slice(16).readUInt32LE()
-      let flags = sliceattrs.slice(20).readUInt32LE()
+      let sliceattrs
+      let a1
+      let a2
+      let level
+      let a4
+      let typeOff
+      let nameOff
+      let size
+      let idx
+      let flags
+      let x, y
+
+      if (this.fileGen >= 21) {
+        sliceattrs = attrs.slice(i * 32, i * 32 + 32)
+        a1 = sliceattrs[0]
+        a2 = sliceattrs[1]
+        level = sliceattrs[2]
+        a4 = sliceattrs[3]
+        typeOff = sliceattrs.slice(4).readUInt32LE()
+        nameOff = sliceattrs.slice(8).readUInt32LE()
+        size = sliceattrs.slice(12).readUInt32LE()
+        idx = sliceattrs.slice(16).readUInt32LE()
+        flags = sliceattrs.slice(20).readUInt32LE()
+        x = sliceattrs.slice(24).readUInt32LE()
+        y = sliceattrs.slice(28).readUInt32LE()
+      } else {
+        sliceattrs = attrs.slice(i * 24, i * 24 + 24)
+        a1 = sliceattrs[0]
+        a2 = sliceattrs[1]
+        level = sliceattrs[2]
+        a4 = sliceattrs[3]
+        typeOff = sliceattrs.slice(4).readUInt32LE()
+        nameOff = sliceattrs.slice(8).readUInt32LE()
+        size = sliceattrs.slice(12).readUInt32LE()
+        idx = sliceattrs.slice(16).readUInt32LE()
+        flags = sliceattrs.slice(20).readUInt32LE()
+      }
 
       let name, typeName
       if ((nameOff & 0x80000000)) {
@@ -440,7 +523,9 @@ class Asset {
         name = Buffer.from(str).toString('ascii')
       }
 
-      if ((typeOff & 0x80000000)) {
+      if ((typeOff === 0xffffffff)) {
+        typeName = 'unk'
+      } else if ((typeOff & 0x80000000)) {
         typeName = baseStrings[typeOff & 0x7fffffff]
       } else {
         let tmp = stab.slice(typeOff)
@@ -466,7 +551,10 @@ class Asset {
       d.push(new Def(name, typeName, size, flags, a4))
     }
 
-    if (defs.length !== 1) throw new Error('defs.length !== 1')
+    // if (defs.length !== 1) throw new Error('defs.length !== 1')
+    if (this.fileGen >= 21) {
+      this.s.read(4)
+    }
     this.classIds.push(code)
     return [code, defs[0]]
   }
@@ -676,7 +764,8 @@ function unpackTexture2D (assetBundle, targetDir = dirname(assetBundle)) {
       if ((!data || data.length === 0) && obj.m_StreamData !== undefined && asset.fs) {
         let sd = obj.m_StreamData
         let name = path.basename(sd.path.toString())
-        data = asset.fs.filesByName[name].slice(sd.offset).slice(0, sd.size)
+        const offset = typeof sd.offset === 'number' ? sd.offset : Number(sd.offset.readBigUInt64LE())
+        data = asset.fs.filesByName[name].slice(offset).slice(0, sd.size)
       }
       if (!data || data.length === 0) {
         continue
