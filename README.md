@@ -59,8 +59,7 @@ client.check().then(resVer => console.log(resVer))
 # is different from node-gyp v3
 $ npm install -g npm
 
-# install node-gyp (5+)
-$ npm install -g node-gyp
+$ npm install -g node-gyp@8
 
 # install node C++ header
 $ node-gyp install # --target=<node version>
