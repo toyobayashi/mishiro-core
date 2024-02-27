@@ -1,8 +1,8 @@
 #!/bin/bash
 
-npm install -g node-gyp@9
-npm config set node_gyp "`npm prefix -g`/lib/node_modules/node-gyp/bin/node-gyp.js"
-node-gyp install
+# npm install -g node-gyp@9
+# npm config set node_gyp "`npm prefix -g`/lib/node_modules/node-gyp/bin/node-gyp.js"
+# node-gyp install
 npm install
 
 # curl -O -L https://github.com/toyobayashi/wasm-ffmpeg/releases/download/n4.4-1/ffmpeg-wasm-n4.4-1.zip
