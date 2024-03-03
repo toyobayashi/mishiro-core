@@ -1,7 +1,6 @@
 #ifndef __ENCODE_WORKER_HPP__
 #define __ENCODE_WORKER_HPP__
 
-#define NAPI_EXPERIMENTAL  // 10.7.0+ Napi::ThreadSafeFunction
 #include <napi.h>
 #include <string>
 #include "aacenc_lib.h"
