@@ -1147,7 +1147,8 @@ EOF
 	echo ${UNAME_MACHINE}-apple-rhapsody${UNAME_RELEASE}
 	exit 0 ;;
     *:Darwin:*:*)
-	case `uname -p` in
+	UNAME_PROCESSOR=`uname -p`
+	case "$UNAME_PROCESSOR" in
 	    *86) UNAME_PROCESSOR=i686 ;;
 	    powerpc) UNAME_PROCESSOR=powerpc ;;
 	esac
