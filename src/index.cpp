@@ -129,7 +129,7 @@ static Value _lz4dec(const CallbackInfo& info) {
     return env.Undefined();
   }
 
-  Buffer<uint8_t> ret = Buffer<uint8_t>::New(env, uncompressed_data, decompressed_size, [](Env env, uint8_t* data) {
+  Buffer<uint8_t> ret = Buffer<uint8_t>::NewOrCopy(env, uncompressed_data, decompressed_size, [](Env env, uint8_t* data) {
     delete[] data;
   });
   return ret;

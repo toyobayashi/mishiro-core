@@ -15,6 +15,9 @@
       'includes': [
         './common.gypi'
       ],
+      'defines': [
+        "NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED",
+      ],
       'dependencies': [
         'deps/lame/libmp3lame.gyp:mp3lame',
         'deps/lz4/lz4.gyp:lz4',

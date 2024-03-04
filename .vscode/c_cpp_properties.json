@@ -1,23 +1,35 @@
 {
+  "env": {
+    "includePath": [
+      "${default}",
+      "${workspaceFolder}/node_modules/node-addon-api",
+      "${workspaceFolder}/deps/lame/include",
+      "${workspaceFolder}/deps/lz4/lib",
+      "${workspaceFolder}/deps/fdk-aac/libAACdec/include",
+      "${workspaceFolder}/deps/fdk-aac/libAACenc/include",
+      "${workspaceFolder}/deps/fdk-aac/libFDK/include",
+      "${workspaceFolder}/deps/fdk-aac/libMpegTPDec/include",
+      "${workspaceFolder}/deps/fdk-aac/libMpegTPEnc/include",
+      "${workspaceFolder}/deps/fdk-aac/libPCMutils/include",
+      "${workspaceFolder}/deps/fdk-aac/libSBRdec/include",
+      "${workspaceFolder}/deps/fdk-aac/libSBRenc/include",
+      "${workspaceFolder}/deps/fdk-aac/libSYS/include"
+    ],
+    "defines": [
+      "NODE_API_NO_EXTERNAL_BUFFERS_ALLOWED"
+    ],
+    "gccPath": "/usr/bin/gcc",
+    "clangPath": "/usr/bin/clang"
+  },
   "configurations": [
     {
       "name": "Win32",
       "includePath": [
-        "${workspaceFolder}/node_modules/node-addon-api",
-        "${workspaceFolder}/deps/lame/include",
-        "${workspaceFolder}/deps/lz4/lib",
-        "${workspaceFolder}/deps/fdk-aac/libAACdec/include",
-        "${workspaceFolder}/deps/fdk-aac/libAACenc/include",
-        "${workspaceFolder}/deps/fdk-aac/libFDK/include",
-        "${workspaceFolder}/deps/fdk-aac/libMpegTPDec/include",
-        "${workspaceFolder}/deps/fdk-aac/libMpegTPEnc/include",
-        "${workspaceFolder}/deps/fdk-aac/libPCMutils/include",
-        "${workspaceFolder}/deps/fdk-aac/libSBRdec/include",
-        "${workspaceFolder}/deps/fdk-aac/libSBRenc/include",
-        "${workspaceFolder}/deps/fdk-aac/libSYS/include",
-        "${env:HOME}/AppData/Local/node-gyp/Cache/14.16.0/include/node"
+        "${includePath}",
+        "${env:HOME}/AppData/Local/node-gyp/Cache/14.16.0/include/node",
       ],
       "defines": [
+        "${defines}",
         "_DEBUG",
         "UNICODE",
         "_UNICODE"
@@ -27,6 +39,19 @@
       "cStandard": "c11",
       "cppStandard": "c++11",
       "intelliSenseMode": "msvc-x64"
+    },
+    {
+      "name": "macOS",
+      "defines": ["${defines}"],
+      "macFrameworkPath": ["/System/Library/Frameworks", "/Library/Frameworks"],
+      "compilerPath": "${clangPath}",
+      "cStandard": "c11",
+      "cppStandard": "c++20",
+      "intelliSenseMode": "${default}",
+      "includePath": [
+        "${includePath}",
+        "${env:HOME}/Library/Caches/node-gyp/20.10.0/include/node"
+      ]
     },
     {
       "name": "Emscripten",
