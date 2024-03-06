@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest, ubuntu-latest, macos-13]
 
     steps:
     - uses: actions/checkout@v2
@@ -20,7 +20,7 @@ jobs:
     #     # actions-cache-folder: 'emsdk-cache'
     - uses: actions/setup-node@v2
       with:
-        node-version: '18.x'
+        node-version: '20'
         registry-url: 'https://registry.npmjs.org'
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
